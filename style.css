@@ -44,8 +44,20 @@ body {
 .card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
 
 /* Χάρτης */
-#map { height: 300px; z-index: 1; }
-#entity-img { width: 100%; border-radius: 8px; object-fit: cover; }
+#map {
+    height: 350px !important; /* Αναγκαστικό ύψος */
+    width: 100%;
+    background: #242f3e; /* Προσωρινό χρώμα μέχρι να φορτώσει */
+    border-radius: 12px;
+}
+
+#entity-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
 
 /* AI Chat Area */
 #chat-box { height: 150px; overflow-y: auto; background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9rem; }
