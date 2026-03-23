@@ -7,20 +7,27 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCSV();
 });
 
-// 1. Ρυθμίσεις Χάρτη (Ελληνικά & Ανάγλυφο)
 function initMap() {
-    const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' });
-    const relief = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { attribution: '© OpenTopoMap' });
-    const modern = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { attribution: '© CartoDB' });
+    map = L.map('map').setView([37.98, 23.72], 4);
 
-    map = L.map('map', {
-        center: [37.98, 23.72],
-        zoom: 4,
-        layers: [relief] // Προεπιλογή το Ανάγλυφο
-    });
+    // ΕΠΙΛΟΓΗ 1: Standard OpenStreetMap (Αυτή που ζήτησες)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
 
-    const baseMaps = { "Ανάγλυφο": relief, "Οδοί": streets, "Μοντέρνο": modern };
-    L.control.layers(baseMaps).addTo(map);
+    /* --- ΑΛΛΕΣ ΕΠΙΛΟΓΕΣ (Βγάλε τα // για να τις ενεργοποιήσεις) --- */
+    
+    // ΕΠΙΛΟΓΗ 2: Ανάγλυφο (OpenTopoMap)
+    // L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png').addTo(map);
+    
+    // ΕΠΙΛΟΓΗ 3: Μοντέρνο γκρι (CartoDB Positron)
+    // L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
+    
+    // ΕΠΙΛΟΓΗ 4: Δορυφόρος (Esri World Imagery)
+    // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
+
+    // Επιλογή 5: CartoDB Dark (Για dark mode)
+    // L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);;
 }
 
 // 2. Φόρτωση και Ταξινόμηση Δεδομένων
@@ -48,7 +55,18 @@ function generateTimeline() {
 
     window.historyData.forEach((item, index) => {
         const div = document.createElement('div');
-        div.className = 'year-marker';
+
+        // Καθορισμός κλάσης χρώματος βάσει EntityType
+        let typeClass = "";
+        switch(item.EntityType) {
+            case "Person": typeClass = "marker-person"; break;
+            case "Empire/State": typeClass = "marker-empire"; break;
+            case "Invention": typeClass = "marker-invention"; break;
+            case "Event/War": typeClass = "marker-event"; break;
+            case "Movement/Culture": typeClass = "marker-culture"; break;
+        }
+        
+        div.className = `year-marker ${typeClass}`;
         
         const yearVal = parseInt(item.Start_Year);
         const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
