@@ -1,94 +1,179 @@
-/* Βασικά & Smooth Scroll */
-html { scroll-behavior: smooth; }
+/* 1. Γενικές Ρυθμίσεις */
 :root {
     --bg: #0f172a;
     --card-bg: #1e293b;
     --accent: #38bdf8;
-    --person-color: #3b82f6; /* Μπλε */
-    --empire-color: #ef4444; /* Κόκκινο */
-    --invention-color: #10b981; /* Πράσινο */
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
-    margin: 0; font-family: sans-serif;
-    background: var(--bg); color: white;
-    height: 100vh; overflow: hidden;
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden; /* Το κύριο scroll γίνεται εσωτερικά */
 }
 
-.app-container { display: flex; height: 100vh; }
+.app-container {
+    display: flex;
+    height: 100vh;
+}
 
-/* Timeline Sidebar */
+/* 2. Timeline Sidebar (Αριστερά) */
 .timeline-sidebar {
-    width: 100px; background: #020617;
-    overflow-y: auto; border-right: 1px solid #334155;
+    width: 140px; /* Λίγο πιο πλατύ για να χωράνε τα ονόματα */
+    background: #020617;
+    overflow-y: auto;
+    border-right: 1px solid #334155;
 }
 
 .year-marker {
-    padding: 15px 10px;
-    border-left: 3px solid #334155;
+    padding: 12px 10px;
+    border-left: 4px solid transparent;
     cursor: pointer;
     transition: 0.2s;
+    border-bottom: 1px solid #1e293b;
     display: flex;
-    flex-direction: column; /* Χρονιά πάνω, Όνομα κάτω */
-    gap: 5px;
+    flex-direction: column;
+    gap: 4px;
 }
-.year-marker .year-number {
+
+.year-marker:hover { background: #1e293b; }
+
+/* Αυτό δείχνει ποιο έτος είναι επιλεγμένο */
+.year-marker.active {
+    background: #1e293b;
+    border-left-color: var(--accent);
+}
+
+.year-number {
     font-weight: bold;
     color: var(--accent);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
-.year-marker .entity-name-preview {
+
+.entity-name-preview {
     font-size: 0.7rem;
-    color: #94a3b8;
+    color: var(--text-dim);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 80px; /* Για να μην χαλάει το πλάτος */
 }
-.year-marker:hover {
-    background: #1e293b;
-    border-left-color: white;
+
+/* 3. Κύριο Περιεχόμενο (Δεξιά) */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
-/* .year-marker:hover { background: #1e293b; color: var(--accent); }
-.year-marker.active { border-left-color: var(--accent); color: white; background: #1e293b; } */
 
-/* Main Content & Grid */
-.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
-.top-header { padding: 20px; background: #0f172a; position: sticky; top: 0; z-index: 10; }
-#searchBar { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; }
+.top-header {
+    padding: 15px 25px;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
 
+#searchBar {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid #334155;
+    background: var(--card-bg);
+    color: white;
+}
+
+/* Grid για Κάρτα & Media */
 .grid-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Δύο στήλες */
-    gap: 20px; padding: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px;
 }
 
-.card { background: var(--card-bg); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-
-/* Χάρτης */
-#map {
-    height: 350px !important; /* Αναγκαστικό ύψος */
-    width: 100%;
-    background: #242f3e; /* Προσωρινό χρώμα μέχρι να φορτώσει */
+.card {
+    background: var(--card-bg);
     border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Χάρτης & Εικόνα */
+#map { 
+    height: 350px !important; 
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+#image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
 }
 
 #entity-img {
     max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-    margin-top: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    border-radius: 8px;
 }
 
-/* AI Chat Area */
-#chat-box { height: 150px; overflow-y: auto; background: #0f172a; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9rem; }
-.chat-input-area { display: flex; gap: 10px; }
-#ai-input { flex: 1; padding: 8px; border-radius: 5px; border: none; }
+/* AI Chat Zone */
+.ai-zone {
+    border: 1px solid var(--accent);
+    margin-top: 20px;
+}
 
-/* Responsive: Αν το κινητό είναι μικρό, οι 2 στήλες γίνονται 1 */
-@media (max-width: 900px) {
+#chat-box {
+    height: 120px;
+    background: #020617;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+#ai-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    background: #0f172a;
+    color: white;
+}
+
+#send-ai-btn {
+    background: var(--accent);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* 4. Responsive (Κινητά) */
+@media (max-width: 850px) {
     .grid-layout { grid-template-columns: 1fr; }
     .app-container { flex-direction: column; }
-    .timeline-sidebar { width: 100%; height: 80px; display: flex; overflow-x: auto; }
+    .timeline-sidebar { 
+        width: 100%; 
+        height: 100px; 
+        display: flex; 
+        flex-direction: row; 
+    }
+    .year-marker { min-width: 100px; border-left: none; border-bottom: 3px solid transparent; }
+    .year-marker.active { border-bottom-color: var(--accent); }
 }
