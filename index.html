@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World History Timeline | AI Enhanced</title>
+    <title>Ιστορικό Χρονλόγιο & AI</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
@@ -11,29 +12,45 @@
 
     <div class="app-container">
         <aside class="timeline-sidebar">
-            <div id="timeline-axis">
-                </div>
+            <div id="timeline-axis"></div>
         </aside>
 
-        <main class="content-area">
-            <header class="top-nav">
-                <input type="text" id="searchBar" placeholder="Αναζήτηση (π.χ. Σωκράτης)...">
-                <div class="filters">
-                    <button class="filter-btn active" data-type="all">Όλα</button>
-                    <button class="filter-btn" data-type="Person">Πρόσωπα</button>
-                    <button class="filter-btn" data-type="Empire/State">Κράτη</button>
-                </div>
+        <main class="main-content">
+            
+            <header class="top-header">
+                <input type="text" id="searchBar" placeholder="Αναζήτηση προσώπου, κράτους ή γεγονότος...">
             </header>
 
-            <div id="entity-display" class="entity-card">
-                <div class="welcome-msg">
-                    <h1>Ιστορικό Χρονλόγιο</h1>
-                    <p>Επιλέξτε μια χρονική περίοδο ή αναζητήστε μια οντότητα για να ξεκινήσετε.</p>
-                </div>
+            <div class="grid-layout">
+                <section class="info-column">
+                    <div id="entity-card" class="card">
+                        <div id="card-content">
+                            <h1>Καλώς ήρθατε</h1>
+                            <p>Επιλέξτε μια χρονολογία από τα αριστερά για να ξεκινήσετε το ταξίδι στην ιστορία.</p>
+                        </div>
+                    </div>
+
+                    <div id="ai-chat-container" class="card">
+                        <h3>🤖 Ρώτησε την AI</h3>
+                        <div id="chat-box"></div>
+                        <div class="chat-input-area">
+                            <input type="text" id="ai-input" placeholder="Ρώτα κάτι για αυτό το πρόσωπο...">
+                            <button id="send-ai-btn">Ερώτηση</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="media-column">
+                    <div id="map" class="card"></div>
+                    <div id="image-container" class="card">
+                        <img id="entity-img" src="" alt="" style="display:none;">
+                    </div>
+                </section>
             </div>
         </main>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
