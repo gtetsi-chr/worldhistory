@@ -1,135 +1,87 @@
-const csvUrl = 'data.csv';
+let map;
+let marker;
+
+// 1. Αρχικοποίηση Χάρτη
+function initMap() {
+    map = L.map('map').setView([37.98, 23.72], 4); // Κέντρο Ελλάδα
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
+    initMap();
     loadData();
-    generateTimelineMarkers();
+    generateTimeline();
 });
 
+// 2. Φόρτωση CSV (Πρόσεξε το delimiter ;)
 function loadData() {
-    Papa.parse(csvUrl, {
+    Papa.parse("data.csv", {
         download: true,
         header: true,
         delimiter: ";",
-        skipEmptyLines: true,
-        encoding: "UTF-8", // Προσθήκη για τα Ελληνικά
         complete: function(results) {
             window.historyData = results.data;
-            console.log("Data Loaded:", window.historyData);
+            console.log("Data loaded");
         }
     });
 }
 
-function generateTimelineMarkers() {
+// 3. Δημιουργία Timeline
+function generateTimeline() {
     const axis = document.getElementById('timeline-axis');
-    // Από το 2024 έως το -5000 με βήμα 100 έτη
     for (let year = 2024; year >= -5000; year -= 100) {
         const div = document.createElement('div');
         div.className = 'year-marker';
         div.innerText = year > 0 ? year : Math.abs(year) + " π.Χ.";
-        
-        // Εδώ ορίζουμε τι θα γίνεται στο κλικ
-        div.onclick = () => filterByYear(year);
-        
+        div.onclick = () => filterByYear(year, div);
         axis.appendChild(div);
     }
 }
 
-// Η συνάρτηση που έλειπε!
-function filterByYear(selectedYear) {
-    console.log("Searching for year around:", selectedYear);
-    
-    // Ψάχνουμε εγγραφές όπου το selectedYear είναι ανάμεσα στο Start και End Year
-    // Ή εγγραφές που ξεκινάνε κοντά σε αυτό το έτος (π.χ. +/- 50 χρόνια)
-    const matches = window.historyData.filter(item => {
-        const start = parseInt(item.Start_Year);
-        const end = parseInt(item.End_Year);
-        
-        // Αν είναι πρόσωπο (στιγμιαίο γεγονός στο timeline) ή αν το έτος είναι εντός ορίων
-        return (selectedYear >= start && selectedYear <= end) || (Math.abs(start - selectedYear) <= 50);
-    });
-
-    if (matches.length > 0) {
-        // Ταξινομούμε βάσει Rank (για να δείξουμε το πιο σημαντικό πρώτο)
-        matches.sort((a, b) => parseInt(a.Rank) - parseInt(b.Rank));
-        displayEntity(matches[0]);
-    } else {
-        alert("Δεν βρέθηκαν καταχωρήσεις για αυτή την περίοδο.");
-    }
-}
-
-function displayEntity(entity) {
-    const display = document.getElementById('entity-display');
-    
-    // Έλεγχος για κενή εικόνα
-    const imageHtml = entity.Image_Path 
-        ? `<img src="${entity.Image_Path}" alt="${entity.Name}" class="entity-img">` 
-        : `<div class="img-placeholder">Δεν υπάρχει εικόνα</div>`;
-
-    display.innerHTML = `
-        <div class="entity-card-inner">
-            <div class="entity-header">
-                <span class="badge">${entity.EntityType}</span>
-                <span class="era-tag">${entity.EraName}</span>
-                <h1>${entity.Name}</h1>
-                <p class="origin"><strong>Καταγωγή:</strong> ${entity.PlaceOfOrigin}</p>
-            </div>
-            
-            ${imageHtml}
-
-            <div class="content-body">
-                <div class="bio">
-                    <h3>Βιογραφικό</h3>
-                    <p>${entity.BiographyShort}</p>
-                </div>
-                <div class="contribution">
-                    <h3>Σημαντική Συνεισφορά</h3>
-                    <p>${entity.KeyContribution}</p>
-                </div>
-                <div class="meta-info">
-                    <span><strong>Σχολή:</strong> ${entity.School_Tag}</span> | 
-                    <span><strong>Status:</strong> ${entity.Gender}</span>
-                </div>
-            </div>
-            
-            <footer class="entity-footer">
-                <a href="${entity.Wiki_URL}" target="_blank" class="wiki-link">Περισσότερα στη Wikipedia →</a>
-            </footer>
-        </div>
-    `;
-}
-// Σύνδεση με το Search Bar από το HTML
-const searchBar = document.getElementById('searchBar');
-
-searchBar.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase();
-    const results = window.historyData.filter(item => 
-        item.Name.toLowerCase().includes(term) || 
-        item.CategoryName.toLowerCase().includes(term)
-    );
-    
-    if(results.length > 0) {
-        displayEntity(results[0]); // Δείχνει το πρώτο αποτέλεσμα της αναζήτησης
-    }
-});
-
-// Βελτιωμένη συνάρτηση φιλτραρίσματος για το Timeline
-function filterByYear(selectedYear) {
-    // Καθαρίζουμε την προηγούμενη επιλογή
+// 4. Φιλτράρισμα & Εμφάνιση
+function filterByYear(year, element) {
+    // Active class στο timeline
     document.querySelectorAll('.year-marker').forEach(el => el.classList.remove('active'));
-    
-    // Φιλτράρουμε τα δεδομένα
-    const matches = window.historyData.filter(item => {
-        const start = parseInt(item.Start_Year);
-        const end = parseInt(item.End_Year) || start; // Αν δεν έχει End_Year, βάλε το Start
-        return (selectedYear >= start && selectedYear <= end);
+    element.classList.add('active');
+
+    const match = window.historyData.find(item => {
+        const s = parseInt(item.Start_Year);
+        const e = parseInt(item.End_Year) || s;
+        return year >= s && year <= e;
     });
 
-    if (matches.length > 0) {
-        // Ταξινομούμε βάσει Rank για να δείξουμε το πιο "σημαντικό"
-        matches.sort((a, b) => parseInt(a.Rank) - parseInt(b.Rank));
-        displayEntity(matches[0]);
-        
-        // Bonus: Αν υπάρχουν πολλοί την ίδια χρονιά, μπορούμε να φτιάξουμε μια λίστα
-        console.log(`Βρέθηκαν ${matches.length} οντότητες για το έτος ${selectedYear}`);
+    if (match) displayEntity(match);
+}
+
+function displayEntity(item) {
+    // 1. Ενημέρωση Κειμένων
+    document.getElementById('card-content').innerHTML = `
+        <h2 style="color:${getColor(item.EntityType)}">${item.Name}</h2>
+        <p><strong>Περίοδος:</strong> ${item.EraName}</p>
+        <p>${item.BiographyShort}</p>
+    `;
+
+    // 2. Εικόνα
+    const img = document.getElementById('entity-img');
+    if (item.Image_Path) {
+        img.src = item.Image_Path;
+        img.style.display = "block";
     }
+
+    // 3. Χάρτης (Coordinate_Point: "lat, long")
+    if (item.Coordinate_Point) {
+        const coords = item.Coordinate_Point.split(',');
+        const lat = parseFloat(coords[0]);
+        const lng = parseFloat(coords[1]);
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng]).addTo(map);
+        map.flyTo([lat, lng], 5);
+    }
+}
+
+// Βοηθητική συνάρτηση για χρώματα
+function getColor(type) {
+    if (type === 'Person') return '#3b82f6';
+    if (type === 'Empire/State') return '#ef4444';
+    return '#10b981';
 }
