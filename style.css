@@ -24,11 +24,33 @@ body {
 }
 
 .year-marker {
-    padding: 20px 10px; border-left: 3px solid transparent;
-    cursor: pointer; font-size: 0.8rem; color: #64748b;
+    padding: 15px 10px;
+    border-left: 3px solid #334155;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    flex-direction: column; /* Χρονιά πάνω, Όνομα κάτω */
+    gap: 5px;
 }
-.year-marker:hover { background: #1e293b; color: var(--accent); }
-.year-marker.active { border-left-color: var(--accent); color: white; background: #1e293b; }
+.year-marker .year-number {
+    font-weight: bold;
+    color: var(--accent);
+    font-size: 0.9rem;
+}
+.year-marker .entity-name-preview {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px; /* Για να μην χαλάει το πλάτος */
+}
+.year-marker:hover {
+    background: #1e293b;
+    border-left-color: white;
+}
+/* .year-marker:hover { background: #1e293b; color: var(--accent); }
+.year-marker.active { border-left-color: var(--accent); color: white; background: #1e293b; } */
 
 /* Main Content & Grid */
 .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
