@@ -97,3 +97,39 @@ function displayEntity(entity) {
         </div>
     `;
 }
+// Σύνδεση με το Search Bar από το HTML
+const searchBar = document.getElementById('searchBar');
+
+searchBar.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    const results = window.historyData.filter(item => 
+        item.Name.toLowerCase().includes(term) || 
+        item.CategoryName.toLowerCase().includes(term)
+    );
+    
+    if(results.length > 0) {
+        displayEntity(results[0]); // Δείχνει το πρώτο αποτέλεσμα της αναζήτησης
+    }
+});
+
+// Βελτιωμένη συνάρτηση φιλτραρίσματος για το Timeline
+function filterByYear(selectedYear) {
+    // Καθαρίζουμε την προηγούμενη επιλογή
+    document.querySelectorAll('.year-marker').forEach(el => el.classList.remove('active'));
+    
+    // Φιλτράρουμε τα δεδομένα
+    const matches = window.historyData.filter(item => {
+        const start = parseInt(item.Start_Year);
+        const end = parseInt(item.End_Year) || start; // Αν δεν έχει End_Year, βάλε το Start
+        return (selectedYear >= start && selectedYear <= end);
+    });
+
+    if (matches.length > 0) {
+        // Ταξινομούμε βάσει Rank για να δείξουμε το πιο "σημαντικό"
+        matches.sort((a, b) => parseInt(a.Rank) - parseInt(b.Rank));
+        displayEntity(matches[0]);
+        
+        // Bonus: Αν υπάρχουν πολλοί την ίδια χρονιά, μπορούμε να φτιάξουμε μια λίστα
+        console.log(`Βρέθηκαν ${matches.length} οντότητες για το έτος ${selectedYear}`);
+    }
+}
