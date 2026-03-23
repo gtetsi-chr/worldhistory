@@ -83,3 +83,43 @@ body {
     max-width: 800px;
     margin: 0 auto;
 }
+.entity-img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin: 20px 0;
+    border: 2px solid #334155;
+}
+
+.badge {
+    background: var(--accent-color);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-right: 10px;
+}
+
+.era-tag {
+    color: var(--text-dim);
+    font-style: italic;
+}
+
+.wiki-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: bold;
+    border: 1px solid var(--accent-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.wiki-link:hover {
+    background: var(--accent-color);
+    color: white;
+}
