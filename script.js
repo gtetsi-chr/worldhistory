@@ -10,9 +10,19 @@ function loadData() {
     Papa.parse(csvUrl, {
         download: true,
         header: true,
+        delimiter: ";", // Εδώ ορίζουμε ότι ο διαχωριστής είναι το ερωτηματικό
+        skipEmptyLines: true, // Καλό είναι να υπάρχει για να μην χτυπάει σε κενές γραμμές στο τέλος
         complete: function(results) {
             window.historyData = results.data;
             console.log("Data Loaded:", window.historyData);
+            
+            // Προαιρετικά: Εμφάνισε το πρώτο στοιχείο μόλις φορτώσουν
+            if(window.historyData.length > 0) {
+                displayEntity(window.historyData[0]);
+            }
+        },
+        error: function(err) {
+            console.error("Σφάλμα κατά τη φόρτωση του CSV:", err);
         }
     });
 }
