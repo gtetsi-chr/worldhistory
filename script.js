@@ -203,7 +203,26 @@ async function displayEntity(item) {
                         </a>
                     </div>`;
                 
-                wikiBody.innerHTML = cleanHtml + fullArticleLink;
+                if (data.parse && data.parse.text) {
+                let cleanHtml = data.parse.text["*"];
+                
+                // Διόρθωση των links
+                cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
+                
+                // Ενημέρωση του περιεχομένου
+                wikiBody.innerHTML = `
+                    <div class="wiki-content">
+                        ${cleanHtml}
+                        <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #a2a9b1;">
+                            <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: #0645ad; font-weight: bold;">
+                                Διαβάστε ολόκληρο το άρθρο στη Βικιπαίδεια →
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                // Αυτόματη κύλιση στην κορυφή του πλασίου κάθε φορά που αλλάζει η οντότητα
+                document.getElementById('image-container').scrollTop = 0;
             } else {
                 wikiBody.innerHTML = `<p>Δεν βρέθηκε λήμμα για το: <b>${item.Name}</b>.</p>`;
             }
