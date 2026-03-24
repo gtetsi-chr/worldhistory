@@ -139,35 +139,42 @@ function generateTimeline() {
     });
 }
 
-// Συνάρτηση για τη δημιουργία χρωματιστού Icon ανάλογα με το EntityType
+// Βοηθητική συνάρτηση για το χρώμα του Marker στον χάρτη
 function createCustomIcon(type) {
-    let color = "#3b82f6"; // Default blue
-    if (type === "Empire/State") color = "#f97316";
-    if (type === "Invention") color = "#10b981";
-    if (type === "Event/War") color = "#8b5cf6";
-    if (type === "Movement/Culture") color = "#ec4899";
+    let color = "#3b82f6"; // Προεπιλογή: Μπλε (Person)
+    if (type === "Empire/State") color = "#f97316"; // Πορτοκαλί
+    else if (type === "Invention") color = "#10b981"; // Πράσινο
+    else if (type === "Event/War") color = "#8b5cf6"; // Μοβ
+    else if (type === "Movement/Culture") color = "#ec4899"; // Ροζ
 
     return L.divIcon({
         className: 'custom-map-marker',
-        html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
-        iconSize: [12, 12],
-        iconAnchor: [6, 6]
+        html: `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.5);"></div>`,
+        iconSize: [14, 14],
+        iconAnchor: [7, 7]
     });
 }
 
 // 4. Προβολή Δεδομένων & Wikipedia Image
 async function displayEntity(item) {
-    // Ενημέρωση Κειμένων
-    document.getElementById('card-content').innerHTML = `
-        <h2 style="color:#38bdf8">${item.Name}</h2>
-        <p><strong>${item.EraName}</strong> | ${item.CategoryName}</p>
-        <p>${item.BiographyShort}</p>
-        <div style="margin-top:15px; padding-top:10px; border-top:1px solid #334155; font-size:0.9rem;">
+    // 1. Ενημέρωση Κειμένων στην Κάρτα
+    const cardContent = document.getElementById('card-content');
+    cardContent.innerHTML = `
+        <span class="era-badge">${item.EraName || 'Ιστορική Περίοδος'}</span>
+        <h2 style="color:#38bdf8; margin: 0 0 10px 0;">${item.Name}</h2>
+        <p style="margin-bottom: 10px;">
+            <strong>${item.CategoryName}</strong> 
+            ${item.PlaceOfOrigin ? `| <span style="color:#94a3b8">${item.PlaceOfOrigin}</span>` : ''}
+        </p>
+        <p style="line-height: 1.5;">${item.BiographyShort}</p>
+        
+        <div class="contribution-box">
             <strong>Συνεισφορά:</strong> ${item.KeyContribution}
+            ${item.School_Tag ? `<span class="school-tag">Σχολή/Ρεύμα: ${item.School_Tag}</span>` : ''}
         </div>
     `;
 
-    // Εικόνα Wikipedia
+    // 2. Εικόνα Wikipedia
     const img = document.getElementById('entity-img');
     const loader = document.getElementById('img-loader');
     img.style.display = "none";
@@ -191,12 +198,19 @@ async function displayEntity(item) {
         }
     }
 
-    // Χάρτης
+    // 3. Χάρτης με Custom Χρωματιστό Marker
     if (item.Coordinate_Point) {
-        const coords = item.Coordinate_Point.split(',').map(Number);
-        if (marker) map.removeLayer(marker);
-        marker = L.marker(coords).addTo(map);
-        map.flyTo(coords, 6);
+            const coords = item.Coordinate_Point.split(',').map(Number);
+            if (marker) map.removeLayer(marker);
+            
+            // Χρησιμοποιούμε τη συνάρτηση createCustomIcon που φτιάξαμε πριν
+            marker = L.marker(coords, { icon: createCustomIcon(item.EntityType) }).addTo(map);
+            
+            // Προσθήκη ενός απλού Popup που ανοίγει αυτόματα
+            marker.bindPopup(`<b>${item.Name}</b>`).openPopup();
+            
+            // Ομαλή μετακίνηση (FlyTo)
+            map.flyTo(coords, 6, { animate: true, duration: 1.5 });
     }
 }
 
