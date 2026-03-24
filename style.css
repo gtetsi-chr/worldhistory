@@ -45,12 +45,31 @@ body {
 }
 
 .year-marker {
-    padding: 15px 10px; 
-   border-left: 5px solid #334155; /* Προεπιλεγμένο χρώμα */
-    cursor: pointer; border-bottom: 1px solid #1e293b;
-    display: flex; flex-direction: column; gap: 4px;
-    transition: all 0.2s ease;
+    display: flex;
+    align-items: center; /* Ευθυγράμμιση κύκλου με το κείμενο */
+    gap: 15px;           /* Απόσταση κύκλου από το κείμενο */
+    padding: 12px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #1e293b;
+    transition: all 0.3s ease;
 }
+
+/* Το κυκλάκι */
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #334155; /* Γκρι αν δεν έχει κατηγορία */
+    flex-shrink: 0;            /* Να μη μικραίνει το κυκλάκι */
+    transition: transform 0.3s ease;
+}
+
+/* Χρώματα στα κυκλάκια ανά κατηγορία */
+.marker-person .dot { background-color: var(--person); box-shadow: 0 0 8px var(--person); }
+.marker-empire .dot { background-color: var(--empire); box-shadow: 0 0 10px var(--empire); }
+.marker-invention .dot { background-color: var(--invention); box-shadow: 0 0 8px var(--invention); }
+.marker-event .dot { background-color: var(--event); box-shadow: 0 0 8px var(--event); }
+.marker-culture .dot { background-color: var(--culture); box-shadow: 0 0 8px var(--culture); }
 
 /* Κλάσεις για χρώματα ανάλογα με το EntityType */
 .marker-person { border-left: 5px solid var(--person) !important; } /* Αν είναι πρόσωπο, βάλε μπλε γραμμή αριστερά */
@@ -59,8 +78,15 @@ body {
 .marker-event { border-left-color: var(--event); }
 .marker-culture { border-left-color: var(--culture); }
 
-.year-marker:hover { background: #1e293b; padding-left: 18px; }
-.year-marker.active { background: #1e293b; border-left-width: 8px; border-left-color: var(--accent); }
+/* Hover & Active Effects */
+.year-marker:hover { background: #1e293b; }
+.year-marker:hover .dot { transform: scale(1.3); } /* Μεγαλώνει λίγο το κυκλάκι στο hover */
+
+.year-marker.active {
+    background: #1e293b;
+    border-left: none; /* Σιγουρευόμαστε ότι δεν υπάρχει η παλιά γραμμή */
+}
+.year-marker.active .year-number { color: white; }
 
 .year-number { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
 .entity-name-preview { font-size: 0.75rem; color: var(--text-dim); }
