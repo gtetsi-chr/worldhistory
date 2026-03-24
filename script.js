@@ -139,6 +139,22 @@ function generateTimeline() {
     });
 }
 
+// Συνάρτηση για τη δημιουργία χρωματιστού Icon ανάλογα με το EntityType
+function createCustomIcon(type) {
+    let color = "#3b82f6"; // Default blue
+    if (type === "Empire/State") color = "#f97316";
+    if (type === "Invention") color = "#10b981";
+    if (type === "Event/War") color = "#8b5cf6";
+    if (type === "Movement/Culture") color = "#ec4899";
+
+    return L.divIcon({
+        className: 'custom-map-marker',
+        html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
+    });
+}
+
 // 4. Προβολή Δεδομένων & Wikipedia Image
 async function displayEntity(item) {
     // Ενημέρωση Κειμένων
