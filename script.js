@@ -214,7 +214,7 @@ async function displayEntity(item) {
                     <div class="wiki-content">
                         ${cleanHtml}
                         <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #a2a9b1;">
-                            <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: #0645ad; font-weight: bold;">
+                            <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: brown; font-weight: bold;">
                                 Διαβάστε ολόκληρο το άρθρο στη Βικιπαίδεια →
                             </a>
                         </div>
