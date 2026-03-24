@@ -157,7 +157,7 @@ function createCustomIcon(type) {
 
 // 4. Προβολή Δεδομένων & Wikipedia Image
 async function displayEntity(item) {
-    // 1. Ενημέρωση της αριστερής κάρτας (Κείμενα από το CSV)
+    // 1. Ενημέρωση Αριστερής Κάρτας (CSV Data)
     const cardContent = document.getElementById('card-content');
     cardContent.innerHTML = `
         <span class="era-badge">${item.EraName || 'Ιστορική Περίοδος'}</span>
@@ -167,62 +167,51 @@ async function displayEntity(item) {
             ${item.PlaceOfOrigin ? `| <span style="color:#94a3b8">${item.PlaceOfOrigin}</span>` : ''}
         </p>
         <p style="line-height: 1.5;">${item.BiographyShort}</p>
-        
         <div class="contribution-box">
             <strong>Συνεισφορά:</strong> ${item.KeyContribution}
             ${item.School_Tag ? `<span class="school-tag">Σχολή/Ρεύμα: ${item.School_Tag}</span>` : ''}
         </div>
     `;
 
-// 2. Wikipedia Λήμμα
+    // 2. Wikipedia (Ο κώδικας που δούλευε, με βελτιώσεις στην εμφάνιση)
     const wikiBody = document.getElementById('wiki-body');
     const topLink = document.getElementById('wiki-top-link');
-    wikiBody.innerHTML = "<div style='padding:20px;'>Φόρτωση...</div>";
+    wikiBody.innerHTML = "Αναζήτηση στην Wikipedia...";
 
     if (item.Wiki_URL) {
-        const wikiTitle = item.Wiki_URL.split('/').pop();
-        
-        // Ορίζουμε το link στο header αμέσως
-        topLink.href = `https://el.wikipedia.org/wiki/${wikiTitle}`;
+        const name = item.Wiki_URL.split('/').pop();
+        topLink.href = `https://el.wikipedia.org/wiki/${name}`;
         topLink.style.display = "block";
 
         try {
-            // Χρησιμοποιούμε ΜΟΝΟ το Parse API για το κείμενο (πιο σταθερό)
-            const parseUrl = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
-            const parseRes = await fetch(parseUrl);
-            const parseData = await parseRes.json();
+            // Το URL που ξέρουμε ότι δουλεύει
+            const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(name)}&format=json&origin=*&prop=text&section=0`;
+            const response = await fetch(url);
+            const data = await response.json();
 
-            if (parseData.parse && parseData.parse.text) {
-                let cleanHtml = parseData.parse.text["*"];
-                
-                // Διόρθωση links
+            if (data.parse && data.parse.text) {
+                let cleanHtml = data.parse.text["*"];
                 cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
                 
-                // ΕΔΩ Η ΑΛΛΑΓΗ: Αντί για νέο fetch, χρησιμοποιούμε το item.Image_Path 
-                // που έχουμε ήδη στο CSV ή το βρήκαμε για το tooltip.
-                let imgHtml = "";
-                if (item.Image_Path) {
-                    imgHtml = `<img src="${item.Image_Path}" class="wiki-main-img" onerror="this.style.display='none'">`;
-                }
+                // Προσθήκη εικόνας από το CSV αν υπάρχει
+                let imgHtml = item.Image_Path ? `<img src="${item.Image_Path}" class="wiki-main-img" onerror="this.style.display='none'">` : "";
 
                 wikiBody.innerHTML = `
                     <div class="wiki-content">
-                        ${imgHtml} 
+                        ${imgHtml}
                         ${cleanHtml}
                         <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #a2a9b1;">
-                            <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: brown; font-weight: bold; text-decoration: none; font-size:0.9rem;">
-                                Διαβάστε ολόκληρο το άρθρο στη Βικιπαίδεια →
+                            <a href="https://el.wikipedia.org/wiki/${name}" target="_blank" style="color: brown; font-weight: bold; text-decoration: none;">
+                                Διαβάστε ολόκληρο το άρθρο στη Wikipedia →
                             </a>
                         </div>
-                    </div>
-                `;
+                    </div>`;
                 document.getElementById('image-container').scrollTop = 0;
             } else {
-                wikiBody.innerHTML = "<div style='padding:20px;'>Το λήμμα δεν βρέθηκε.</div>";
+                wikiBody.innerHTML = "Δεν βρέθηκε λήμμα.";
             }
         } catch (err) {
-            console.error("Wiki Error:", err); // Θα βλέπεις το πραγματικό λάθος στην κονσόλα (F12)
-            wikiBody.innerHTML = "<div style='padding:20px;'>Σφάλμα κατά τη φόρτωση του κειμένου.</div>";
+            wikiBody.innerHTML = "Σφάλμα σύνδεσης.";
         }
     }
 
