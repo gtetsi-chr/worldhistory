@@ -157,7 +157,7 @@ function createCustomIcon(type) {
 
 // 4. Προβολή Δεδομένων & Wikipedia Image
 async function displayEntity(item) {
-    // 1. Ενημέρωση Κειμένων στην Κάρτα
+    // 1. Ενημέρωση της αριστερής κάρτας (Κείμενα από το CSV)
     const cardContent = document.getElementById('card-content');
     cardContent.innerHTML = `
         <span class="era-badge">${item.EraName || 'Ιστορική Περίοδος'}</span>
@@ -174,43 +174,53 @@ async function displayEntity(item) {
         </div>
     `;
 
-    // 2. Εικόνα Wikipedia
-    const img = document.getElementById('entity-img');
-    const loader = document.getElementById('img-loader');
-    img.style.display = "none";
-    loader.style.display = "block";
-    loader.innerText = "Αναζήτηση εικόνας...";
+    // 2. Wikipedia Λήμμα (Αντικατάσταση της εικόνας με κείμενο)
+    const wikiBody = document.getElementById('wiki-body');
+    wikiBody.innerHTML = "<div style='color:var(--accent)'>Φόρτωση λήμματος Wikipedia...</div>";
 
     if (item.Wiki_URL) {
-        const title = item.Wiki_URL.split('/').pop();
+        // Παίρνουμε το όνομα του λήμματος από το URL (π.χ. Μέγας_Αλέξανδρος)
+        const wikiTitle = item.Wiki_URL.split('/').pop();
+        
         try {
-            const response = await fetch(`https://el.wikipedia.org/api/rest_v1/page/summary/${title}`);
+            // Χρήση του MediaWiki Action API για λήψη του κειμένου (section 0 = εισαγωγή)
+            const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
+            
+            const response = await fetch(url);
             const data = await response.json();
-            if (data.thumbnail) {
-                img.src = data.thumbnail.source;
-                img.style.display = "block";
-                loader.style.display = "none";
+
+            if (data.parse && data.parse.text) {
+                let cleanHtml = data.parse.text["*"];
+                
+                // Διόρθωση των links ώστε να ανοίγουν σε νέα καρτέλα
+                cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
+                
+                // Προσθήκη συνδέσμου για πλήρες άρθρο στο τέλος
+                const fullArticleLink = `
+                    <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #334155;">
+                        <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: var(--accent); font-weight: bold; text-decoration: none;">
+                            Διαβάστε ολόκληρο το άρθρο στη Wikipedia →
+                        </a>
+                    </div>`;
+                
+                wikiBody.innerHTML = cleanHtml + fullArticleLink;
             } else {
-                loader.innerText = "Δεν βρέθηκε εικόνα";
+                wikiBody.innerHTML = `<p>Δεν βρέθηκε λήμμα για το: <b>${item.Name}</b>.</p>`;
             }
-        } catch (e) {
-            loader.innerText = "Σφάλμα Wiki";
+        } catch (err) {
+            wikiBody.innerHTML = "Σφάλμα κατά τη σύνδεση με την Wikipedia.";
         }
+    } else {
+        wikiBody.innerHTML = "Δεν υπάρχει διαθέσιμος σύνδεσμος Wikipedia για αυτή την εγγραφή.";
     }
 
-    // 3. Χάρτης με Custom Χρωματιστό Marker
+    // 3. Χάρτης
     if (item.Coordinate_Point) {
-            const coords = item.Coordinate_Point.split(',').map(Number);
-            if (marker) map.removeLayer(marker);
-            
-            // Χρησιμοποιούμε τη συνάρτηση createCustomIcon που φτιάξαμε πριν
-            marker = L.marker(coords, { icon: createCustomIcon(item.EntityType) }).addTo(map);
-            
-            // Προσθήκη ενός απλού Popup που ανοίγει αυτόματα
-            marker.bindPopup(`<b>${item.Name}</b>`).openPopup();
-            
-            // Ομαλή μετακίνηση (FlyTo)
-            map.flyTo(coords, 6, { animate: true, duration: 1.5 });
+        const coords = item.Coordinate_Point.split(',').map(Number);
+        if (marker) map.removeLayer(marker);
+        marker = L.marker(coords, { icon: createCustomIcon(item.EntityType) }).addTo(map);
+        marker.bindPopup(`<b>${item.Name}</b>`).openPopup();
+        map.flyTo(coords, 6, { animate: true, duration: 1.5 });
     }
 }
 
