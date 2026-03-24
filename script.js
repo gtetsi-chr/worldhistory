@@ -198,7 +198,7 @@ async function displayEntity(item) {
                 // Προσθήκη συνδέσμου για πλήρες άρθρο στο τέλος
                 const fullArticleLink = `
                     <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #334155;">
-                        <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: var(--accent); font-weight: bold; text-decoration: none;">
+                        <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: brown; font-weight: bold; text-decoration: none;">
                             Διαβάστε ολόκληρο το άρθρο στη Wikipedia →
                         </a>
                     </div>`;
