@@ -157,11 +157,12 @@ function createCustomIcon(type) {
 
 // 4. Προβολή Δεδομένων & Wikipedia Image
 async function displayEntity(item) {
+    
     // 1. Ενημέρωση Αριστερής Κάρτας (CSV Data)
 const cardContent = document.getElementById('card-content');
     
-    // Αρχικά φέρνουμε την εικόνα από τη Wikipedia (όπως στο tooltip)
-    let wikiImg = "https://via.placeholder.com/150?text=No+Image"; // Placeholder αν αποτύχει
+    // Λήψη εικόνας από Wikipedia (όπως στο tooltip)
+    let wikiImg = ""; 
     if (item.Wiki_URL) {
         const title = item.Wiki_URL.split('/').pop();
         try {
@@ -171,34 +172,61 @@ const cardContent = document.getElementById('card-content');
         } catch(e) {}
     }
 
-    // Σύνθεση της κάρτας με όλα τα πεδία
-    cardContent.innerHTML = `
-        <div class="card-header">
-            <span class="era-badge">${item.EraName || 'Ιστορική Περίοδος'}</span>
-            <h2 class="entity-title">${item.Name}</h2>
-        </div>
+    // Βοηθητική συνάρτηση για να ελέγχουμε αν ένα πεδίο έχει έγκυρη τιμή
+    const hasValue = (val) => val && val !== "NULL" && val !== "";
 
-        <div class="entity-main-info">
-            <img src="${wikiImg}" class="entity-portrait">
-            <div class="entity-stats">
-                <p><strong>Τύπος:</strong> ${item.CategoryName}</p>
-                <p><strong>Καταγωγή:</strong> ${item.PlaceOfOrigin || 'Άγνωστο'}</p>
-                <p><strong>Περίοδος:</strong> ${item.Start_Year} έως ${item.End_Year}</p>
-                ${item.Gender ? `<p><strong>Φύλο:</strong> ${item.Gender}</p>` : ''}
+    // Χτίσιμο του HTML δυναμικά
+    let html = `
+        <div class="entity-card-v2">
+            <div class="card-main-row">
+                ${wikiImg ? `<img src="${wikiImg}" class="entity-img-v2">` : ''}
+                <div class="entity-header-info">
+                    ${hasValue(item.EraName) ? `<span class="era-badge-v2">${item.EraName}</span>` : ''}
+                    <h2 class="entity-name-v2">${item.Name}</h2>
+                    <p class="entity-type-v2">${item.EntityType} 
+                        ${hasValue(item.Category_Lvl1) ? `• ${item.Category_Lvl1}` : ''}
+                        ${hasValue(item.Category_Lvl2) ? ` (${item.Category_Lvl2})` : ''}
+                    </p>
+                    <p class="entity-years-v2">
+                        ${item.Start_Year} ${parseInt(item.Start_Year) < 0 ? 'π.Χ.' : ''} 
+                        — 
+                        ${item.End_Year} ${parseInt(item.End_Year) < 0 ? 'π.Χ.' : ''}
+                    </p>
+                </div>
             </div>
-        </div>
 
-        <div class="entity-bio">
-            <p>${item.BiographyShort}</p>
-        </div>
-
-        <div class="entity-footer">
-            ${item.School_Tag ? `<div class="info-tag"><strong>Σχολή:</strong> ${item.School_Tag}</div>` : ''}
-            <div class="contribution-highlight">
-                <strong>Συνεισφορά:</strong> ${item.KeyContribution}
+            <div class="entity-bio-v2">
+                ${hasValue(item.BiographyShort) ? `<p>${item.BiographyShort}</p>` : ''}
             </div>
-        </div>
     `;
+
+    // Ειδικά πεδία ΜΟΝΟ για Πρόσωπα (Person)
+    if (item.EntityType === "Person") {
+        html += `<div class="person-extra-info">`;
+        
+        if (hasValue(item.CategoryName)) html += `<p><strong>Ιδιότητα:</strong> ${item.CategoryName}</p>`;
+        if (hasValue(item.Gender)) html += `<p><strong>Φύλο:</strong> ${item.Gender}</p>`;
+        if (hasValue(item.PlaceOfOrigin)) html += `<p><strong>Τόπος Καταγωγής:</strong> ${item.PlaceOfOrigin}</p>`;
+        if (hasValue(item.Start_Date)) html += `<p><strong>Ημ/νία Γέννησης:</strong> ${item.Start_Date}</p>`;
+        if (hasValue(item.End_Date)) html += `<p><strong>Ημ/νία Θανάτου:</strong> ${item.End_Date}</p>`;
+        if (hasValue(item.School_Tag)) html += `<p><strong>Σχολή/Ρεύμα:</strong> ${item.School_Tag}</p>`;
+        
+        html += `</div>`;
+    }
+
+    // Συνεισφορά (για όλους αν υπάρχει)
+    if (hasValue(item.KeyContribution)) {
+        html += `
+            <div class="contribution-v2">
+                <strong>Κύρια Συνεισφορά:</strong>
+                <p>${item.KeyContribution}</p>
+            </div>
+        `;
+    }
+
+    html += `</div>`; // Κλείσιμο κεντρικού div
+    cardContent.innerHTML = html;
+    
 
     // 2. Wikipedia 
     const wikiBody = document.getElementById('wiki-body');
