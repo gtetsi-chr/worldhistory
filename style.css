@@ -240,17 +240,4 @@ body {
     color: var(--text-dim);
     font-size: 0.8rem;
 }
-/* Styling για το περιεχόμενο της Wikipedia */
-#wiki-body a {
-    color: var(--accent);
-    text-decoration: none;
-}
 
-#wiki-body a:hover {
-    text-decoration: underline;
-}
-
-/* Κρύβουμε κάποια περιττά στοιχεία που στέλνει η Wikipedia (π.χ. [1], [2]) */
-.reference, .extiw, .mbox-small {
-    display: none;
-}
