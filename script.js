@@ -158,6 +158,8 @@ function createCustomIcon(type) {
 // 4. Προβολή Δεδομένων & Wikipedia Image
 async function displayEntity(item) {
     
+	window.currentSelectedEntity = item; // Αποθήκευση του τρέχοντος αντικειμένου για την AI
+	
     // 1. Ενημέρωση Αριστερής Κάρτας (CSV Data)
 const cardContent = document.getElementById('card-content');
     
