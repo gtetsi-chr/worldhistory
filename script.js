@@ -57,6 +57,7 @@ function generateTimeline() {
         const div = document.createElement('div');
 
         // Καθορισμός κλάσης χρώματος βάσει EntityType
+        // Εδώ ελέγχουμε τι γράφει το CSV στη στήλη EntityType
         let typeClass = "";
         switch(item.EntityType) {
             case "Person": typeClass = "marker-person"; break;
@@ -65,7 +66,8 @@ function generateTimeline() {
             case "Event/War": typeClass = "marker-event"; break;
             case "Movement/Culture": typeClass = "marker-culture"; break;
         }
-        
+
+        // Τώρα δίνουμε στο div και την κλάση year-marker ΚΑΙ το χρώμα του
         div.className = `year-marker ${typeClass}`;
         
         const yearVal = parseInt(item.Start_Year);
