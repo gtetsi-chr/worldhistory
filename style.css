@@ -464,3 +464,18 @@ body {
     background-color: #eef2f7;
     text-decoration: underline;
 }
+/* Περιορισμός πλάτους για να μην "ανοίγει" η κάρτα δεξιά */
+.wiki-content, #wiki-full-content {
+    max-width: 100%;
+    overflow-x: auto; /* Αν κάτι είναι πολύ μεγάλο, θα βγάζει εσωτερικό scrollbar αντί να χαλάει το layout */
+    word-wrap: break-word;
+}
+
+/* Ειδικά για τους πίνακες και τα διαγράμματα της Wikipedia */
+#wiki-body table, 
+#wiki-body .thumb, 
+#wiki-body div {
+    max-width: 100% !important;
+    height: auto !important;
+    box-sizing: border-box;
+}
