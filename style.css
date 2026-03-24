@@ -89,20 +89,22 @@ body {
 
 /* Το κυκλάκι */
 .dot {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: #475569;
-    border: 2px solid #020617; /* Για να "κόβει" τη γραμμή οπτικά */
+    background: var(--bg);/*#475569; */
+    /*border: 2px solid #020617; /* Για να "κόβει" τη γραμμή οπτικά */
     flex-shrink: 0;
 }
 
 /* Χρώματα στα κυκλάκια ανά κατηγορία */
-.marker-person .dot { background-color: var(--person); box-shadow: 0 0 8px var(--person); }
-.marker-empire .dot { background-color: var(--empire); box-shadow: 0 0 10px var(--empire); }
-.marker-invention .dot { background-color: var(--invention); box-shadow: 0 0 8px var(--invention); }
-.marker-event .dot { background-color: var(--event); box-shadow: 0 0 8px var(--event); }
-.marker-culture .dot { background-color: var(--culture); box-shadow: 0 0 8px var(--culture); }
+.marker-person .dot { border: 3px solid var(--person); box-shadow: 0 0 8px var(--person); }
+.marker-empire .dot { border: 3px solid var(--empire); box-shadow: 0 0 10px var(--empire); }
+.marker-invention .dot { border: 3px solid var(--invention); box-shadow: 0 0 8px var(--invention); }
+.marker-event .dot { border: 3px solid var(--event); box-shadow: 0 0 8px var(--event); }
+.marker-culture .dot { border: 3px solid var(--culture); box-shadow: 0 0 8px var(--culture); }
+
+
 
 /* Κλάσεις για χρώματα ανάλογα με το EntityType */
 /*.marker-person { border-left: 5px solid var(--person) !important; } /* Αν είναι πρόσωπο, βάλε μπλε γραμμή αριστερά */
