@@ -444,3 +444,23 @@ body {
     padding: 10px;
     border-radius: 0 6px 6px 0;
 }
+/* Στυλ για το κουμπί 'Δείξε περισσότερα' της Wikipedia */
+.wiki-more-btn {
+    display: block;
+    width: fit-content;
+    margin: 15px auto;
+    padding: 8px 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    color: #3b82f6;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.wiki-more-btn:hover {
+    background-color: #eef2f7;
+    text-decoration: underline;
+}
