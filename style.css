@@ -114,7 +114,7 @@ body {
 /*.marker-culture { border-left-color: var(--culture); }*/
 
 /* Hover & Active Effects */
-.year-marker:hover { background: #1e293b; }
+.year-marker:hover { background: #1e293b73; } /*1e293b*/
 .year-marker:hover .dot { transform: scale(1.3); } /* Μεγαλώνει λίγο το κυκλάκι στο hover */
 
 .year-marker.active {
