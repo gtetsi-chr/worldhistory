@@ -241,3 +241,52 @@ body {
     font-size: 0.8rem;
 }
 
+/* Το στυλ του Wikipedia Container */
+.wikipedia-style {
+    background: #ffffff !important; /* Λευκό φόντο */
+    color: #202122 !important;    /* Σκούρο γκρι κείμενο Wikipedia */
+    height: 500px;
+    overflow-y: auto;
+    padding: 0 !important;         /* Αφαιρούμε το padding για να κολλήσει ο τίτλος πάνω */
+    display: block !important;     /* Διασφαλίζουμε ότι ξεκινάει από πάνω */
+    border: 1px solid #a2a9b1;
+}
+
+/* Ο τίτλος "Βικιπαίδεια" στο πάνω μέρος */
+.wiki-header {
+    background: #f8f9fa;
+    color: #000;
+    padding: 10px 15px;
+    font-weight: bold;
+    border-bottom: 1px solid #a2a9b1;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-size: 1.2rem;
+}
+
+/* Το κυρίως σώμα του κειμένου */
+#wiki-body {
+    padding: 15px;
+    font-family: sans-serif;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    text-align: left; /* Στοίχιση αριστερά */
+}
+
+/* Τα links να είναι μπλε όπως στην Wikipedia */
+#wiki-body a {
+    color: #0645ad;
+    text-decoration: none;
+}
+
+#wiki-body a:hover {
+    text-decoration: underline;
+}
+
+/* ΚΡΥΒΟΥΜΕ ΤΑ BANNERS ΚΑΙ ΤΙΣ ΕΙΔΟΠΟΙΗΣΕΙΣ (ambox, navbox κτλ) */
+#wiki-body .ambox, 
+#wiki-body .navbox, 
+#wiki-body .infobox, 
+#wiki-body .metadata, 
+#wiki-body .mw-empty-elt {
+    display: none !important;
+}
