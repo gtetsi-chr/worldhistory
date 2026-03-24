@@ -229,57 +229,75 @@ const cardContent = document.getElementById('card-content');
     
 
     // 2. Wikipedia 
-    const wikiBody = document.getElementById('wiki-body');
+    const wikiIntro = document.getElementById('wiki-intro');
+    const wikiFullContent = document.getElementById('wiki-full-content');
+    const showMoreBtn = document.getElementById('show-more-wiki');
     const topLink = document.getElementById('wiki-top-link');
     
-    if (wikiBody) wikiBody.innerHTML = "Αναζήτηση στην Wikipedia...";
+    // Επαναφορά στην αρχική κατάσταση
+    wikiIntro.innerHTML = "Αναζήτηση στην Wikipedia...";
+    wikiFullContent.innerHTML = "";
+    wikiFullContent.style.display = "none";
+    showMoreBtn.style.display = "none";
 
+	// Καθαρισμός του ονόματος από το URL
     if (item.Wiki_URL) {
-        // Καθαρισμός του ονόματος από το URL
         const urlParts = item.Wiki_URL.split('/');
-        const name = urlParts[urlParts.length - 1];
+        const wikiTitle = urlParts[urlParts.length - 1];
         
         if (topLink) {
-            topLink.href = `https://el.wikipedia.org/wiki/${name}`;
+            topLink.href = `https://el.wikipedia.org/wiki/${wikiTitle}`;
             topLink.style.display = "block";
         }
 
         try {
-            const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(name)}&format=json&origin=*&prop=text|images&section=0`;
+            // Φέρνουμε πρώτα την εισαγωγή (Section 0)
+            const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
             const response = await fetch(url);
             const data = await response.json();
 
             if (data.parse && data.parse.text) {
                 let cleanHtml = data.parse.text["*"];
-                
-                // Διόρθωση links
+				// Διόρθωση links
                 cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
                 
-                // Χρήση της εικόνας που ήδη βρήκαμε για το tooltip (αν υπάρχει) ή από το CSV
+				// Χρήση της εικόνας που ήδη βρήκαμε για το tooltip (αν υπάρχει) ή από το CSV
                 let imgHtml = "";
                 if (item.Image_Path) {
                     imgHtml = `<img src="${item.Image_Path}" class="wiki-main-img" style="float:right; margin:10px; max-width:120px;" onerror="this.style.display='none'">`;
                 }
 
-                wikiBody.innerHTML = `
-                    <div class="wiki-content">
-                        ${imgHtml}
-                        ${cleanHtml}
-                        <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #a2a9b1;">
-                            <a href="https://el.wikipedia.org/wiki/${name}" target="_blank" style="color: brown; font-weight: bold; text-decoration: none;">
-                                Διαβάστε ολόκληρο το άρθρο στη Wikipedia →
-                            </a>
-                        </div>
-                    </div>`;
-                
-                // Scroll στην κορυφή
+                wikiIntro.innerHTML = `<div class="wiki-content">${imgHtml}${cleanHtml}</div>`;
+                showMoreBtn.style.display = "block"; // Εμφάνιση κουμπιού
+
+                // Λειτουργία κουμπιού "Δείξε περισσότερα"
+                showMoreBtn.onclick = async () => {
+                    showMoreBtn.innerText = "Φόρτωση...";
+                    try {
+                        // Φέρνουμε ΟΛΟ το κείμενο εκτός από το section 0 που ήδη έχουμε
+                        const fullUrl = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&mobileformat=1`;
+                        const fullRes = await fetch(fullUrl);
+                        const fullData = await fullRes.json();
+                        
+                        let fullHtml = fullData.parse.text["*"];
+                        fullHtml = fullHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
+                        
+                        wikiFullContent.innerHTML = fullHtml;
+                        wikiFullContent.style.display = "block";
+                        wikiIntro.style.display = "none"; // Κρύβουμε την εισαγωγή για να μην διπλασιάζεται
+                        showMoreBtn.style.display = "none"; // Κρύβουμε το κουμπί
+                    } catch (err) {
+                        showMoreBtn.innerText = "Σφάλμα φόρτωσης";
+                    }
+                };
+
+				// Scroll στην κορυφή
                 document.getElementById('image-container').scrollTop = 0;
             } else {
-                wikiBody.innerHTML = "Δεν βρέθηκε λήμμα στη Βικιπαίδεια.";
+                wikiIntro.innerHTML = "Δεν βρέθηκε λήμμα στη Βικιπαίδεια.";
             }
         } catch (err) {
-            console.error(err);
-            wikiBody.innerHTML = "Σφάλμα σύνδεσης με τη Βικιπαίδεια.";
+            wikiIntro.innerHTML = "Σφάλμα σύνδεσης με τη Βικιπαίδεια.";
         }
     }
 
