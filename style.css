@@ -73,7 +73,9 @@ body {
     background: #020617;
     overflow-y: auto; /* Επιτρέπει το σκρολάρισμα */
     border-right: 1px solid #334155;
-    
+    position: relative; 
+    z-index: 100; /* Υψηλό νούμερο για να είναι πάνω από όλα */
+	
     /* Αυτές οι 3 εντολές εξαφανίζουν τη μπάρα (το γκρίζο μπαστούνι) αλλά αφήνουν το σκρολάρισμα να δουλεύει */
     scrollbar-width: none; /* Για Firefox */
     -ms-overflow-style: none; /* Για Internet Explorer */
@@ -141,7 +143,7 @@ body {
 .entity-name-preview { font-size: 0.75rem; color: var(--text-dim); }
 
 /* MAIN CONTENT */
-.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; z-index: 1; /* Χαμηλό νούμερο */}
 .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
 
 .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
