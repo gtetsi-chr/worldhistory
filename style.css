@@ -47,8 +47,11 @@ body {
 	z-index: 1;
 }
 #timelineSearch:focus {
-    width: 150%; 
-    position: relative;
+	transform: scaleX(1.3); 
+    transform-origin: left; /* Να μεγαλώσει προς τα δεξιά */
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
     z-index: 9999;
 }
 
