@@ -331,3 +331,59 @@ document.getElementById('timelineSearch').addEventListener('input', function(e) 
         }
     });
 });
+// --- ΛΕΙΤΟΥΡΓΙΑ AI CHATBOX ---
+
+// Μεταβλητή για να ξέρουμε ποιο entity είναι επιλεγμένο αυτή τη στιγμή
+let currentSelectedEntity = null;
+
+// Ενημέρωση της currentSelectedEntity όταν επιλέγεται κάτι (θα το βάλουμε μέσα στην displayEntity αργότερα)
+async function callAI() {
+    const inputField = document.getElementById('ai-input');
+    const chatBox = document.getElementById('chat-box');
+    const question = inputField.value.trim();
+
+    if (!question) return;
+    if (!window.currentSelectedEntity) {
+        chatBox.innerHTML += `<p style="color:orange;">⚠️ Παρακαλώ επιλέξτε πρώτα ένα πρόσωπο ή γεγονός από το χρονολόγιο.</p>`;
+        return;
+    }
+
+    // Εμφάνιση ερώτησης χρήστη
+    chatBox.innerHTML += `<p><strong>Εσείς:</strong> ${question}</p>`;
+    inputField.value = ""; // Καθαρισμός input
+    
+    // Εμφάνιση "Σκέφτεται..."
+    const loadingId = "loading-" + Date.now();
+    chatBox.innerHTML += `<p id="${loadingId}" style="color:var(--accent);">🤖 Η AI σκέφτεται...</p>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        const WORKER_URL = "ΕΔΩ_ΒΑΛΕ_ΤΟ_URL_ΑΠΟ_ΤΟΝ_CLOUDFLARE_WORKER"; // Π.χ. https://...workers.dev
+
+        const response = await fetch(WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                question: question,
+                entityName: window.currentSelectedEntity.Name,
+                context: window.currentSelectedEntity.BiographyShort + " " + window.currentSelectedEntity.KeyContribution
+            })
+        });
+
+        const data = await response.json();
+        
+        // Αφαίρεση του "Σκέφτεται..." και εμφάνιση απάντησης
+        document.getElementById(loadingId).remove();
+        chatBox.innerHTML += `<p><strong>🤖 AI:</strong> ${data.text}</p>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    } catch (err) {
+        document.getElementById(loadingId).innerText = "❌ Σφάλμα σύνδεσης με την AI.";
+    }
+}
+
+// Event Listeners για το κουμπί και το Enter
+document.getElementById('send-ai-btn').addEventListener('click', callAI);
+document.getElementById('ai-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') callAI();
+});
