@@ -173,28 +173,38 @@ async function displayEntity(item) {
         </div>
     `;
 
-    // 2. Wikipedia (Ο κώδικας που δούλευε, με βελτιώσεις στην εμφάνιση)
+    // 2. Wikipedia 
     const wikiBody = document.getElementById('wiki-body');
     const topLink = document.getElementById('wiki-top-link');
-    wikiBody.innerHTML = "Αναζήτηση στην Wikipedia...";
+    
+    if (wikiBody) wikiBody.innerHTML = "Αναζήτηση στην Wikipedia...";
 
     if (item.Wiki_URL) {
-        const name = item.Wiki_URL.split('/').pop();
-        topLink.href = `https://el.wikipedia.org/wiki/${name}`;
-        topLink.style.display = "block";
+        // Καθαρισμός του ονόματος από το URL
+        const urlParts = item.Wiki_URL.split('/');
+        const name = urlParts[urlParts.length - 1];
+        
+        if (topLink) {
+            topLink.href = `https://el.wikipedia.org/wiki/${name}`;
+            topLink.style.display = "block";
+        }
 
         try {
-            // Το URL που ξέρουμε ότι δουλεύει
-            const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(name)}&format=json&origin=*&prop=text&section=0`;
+            const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(name)}&format=json&origin=*&prop=text|images&section=0`;
             const response = await fetch(url);
             const data = await response.json();
 
             if (data.parse && data.parse.text) {
                 let cleanHtml = data.parse.text["*"];
+                
+                // Διόρθωση links
                 cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
                 
-                // Προσθήκη εικόνας από το CSV αν υπάρχει
-                let imgHtml = item.Image_Path ? `<img src="${item.Image_Path}" class="wiki-main-img" onerror="this.style.display='none'">` : "";
+                // Χρήση της εικόνας που ήδη βρήκαμε για το tooltip (αν υπάρχει) ή από το CSV
+                let imgHtml = "";
+                if (item.Image_Path) {
+                    imgHtml = `<img src="${item.Image_Path}" class="wiki-main-img" style="float:right; margin:10px; max-width:120px;" onerror="this.style.display='none'">`;
+                }
 
                 wikiBody.innerHTML = `
                     <div class="wiki-content">
@@ -206,12 +216,15 @@ async function displayEntity(item) {
                             </a>
                         </div>
                     </div>`;
+                
+                // Scroll στην κορυφή
                 document.getElementById('image-container').scrollTop = 0;
             } else {
-                wikiBody.innerHTML = "Δεν βρέθηκε λήμμα.";
+                wikiBody.innerHTML = "Δεν βρέθηκε λήμμα στη Βικιπαίδεια.";
             }
         } catch (err) {
-            wikiBody.innerHTML = "Σφάλμα σύνδεσης.";
+            console.error(err);
+            wikiBody.innerHTML = "Σφάλμα σύνδεσης με τη Βικιπαίδεια.";
         }
     }
 
