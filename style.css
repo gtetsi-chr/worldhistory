@@ -1,11 +1,24 @@
+/* --- ΧΡΩΜΑΤΙΚΗ ΚΩΔΙΚΟΠΟΙΗΣΗ --- */
 :root {
     --bg: #0f172a;
     --card-bg: #1e293b;
     --accent: #38bdf8;
     --text-main: #f8fafc;
     --text-dim: #94a3b8;
+	--person: #3b82f6;    /* Μπλε */
+    --empire: #f97316;    /* Πορτοκαλί/Κόκκινο */
+    --invention: #10b981; /* Πράσινο */
+    --event: #8b5cf6;     /* Μοβ */
+    --culture: #ec4899;   /* Ροζ */
 }
-
+/* --- ΧΡΩΜΑΤΙΚΗ ΚΩΔΙΚΟΠΟΙΗΣΗ --- */
+:root {
+    --person: #3b82f6;    /* Μπλε */
+    --empire: #f97316;    /* Πορτοκαλί/Κόκκινο */
+    --invention: #10b981; /* Πράσινο */
+    --event: #8b5cf6;     /* Μοβ */
+    --culture: #ec4899;   /* Ροζ */
+}
 body {
     margin: 0; font-family: sans-serif;
     background: var(--bg); color: var(--text-main);
@@ -16,19 +29,38 @@ body {
 
 /* TIMELINE SIDEBAR */
 .timeline-sidebar {
-    width: 180px; background: #020617;
-    overflow-y: auto; border-right: 1px solid #334155;
+    width: 200px;
+    background: #020617;
+    overflow-y: auto; /* Επιτρέπει το σκρολάρισμα */
+    border-right: 1px solid #334155;
+    
+    /* Αυτές οι 3 εντολές εξαφανίζουν τη μπάρα (το γκρίζο μπαστούνι) αλλά αφήνουν το σκρολάρισμα να δουλεύει */
+    scrollbar-width: none; /* Για Firefox */
+    -ms-overflow-style: none; /* Για Internet Explorer */
+}
+
+/* Για Chrome, Safari και Edge */
+.timeline-sidebar::-webkit-scrollbar {
+    display: none;
 }
 
 .year-marker {
-    padding: 15px 10px; border-left: 4px solid transparent;
+    padding: 15px 10px; 
+   border-left: 5px solid #334155; /* Προεπιλεγμένο χρώμα */
     cursor: pointer; border-bottom: 1px solid #1e293b;
     display: flex; flex-direction: column; gap: 4px;
-    transition: 0.2s;
+    transition: all 0.2s ease;
 }
 
-.year-marker:hover { background: #1e293b; }
-.year-marker.active { background: #1e293b; border-left-color: var(--accent); }
+/* Κλάσεις για χρώματα ανάλογα με το EntityType */
+.marker-person { border-left: 5px solid var(--person) !important; } /* Αν είναι πρόσωπο, βάλε μπλε γραμμή αριστερά */
+.marker-empire { border-left: 5px solid var(--empire) !important; } /* Αν είναι αυτοκρατορία, βάλε πορτοκαλί γραμμή */
+.marker-invention { border-left: 5px solid var(--invention) !important; } /* Αν είναι εφεύρεση, βάλε πράσινη γραμμή */
+.marker-event { border-left-color: var(--event); }
+.marker-culture { border-left-color: var(--culture); }
+
+.year-marker:hover { background: #1e293b; padding-left: 18px; }
+.year-marker.active { background: #1e293b; border-left-width: 8px; border-left-color: var(--accent); }
 
 .year-number { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
 .entity-name-preview { font-size: 0.75rem; color: var(--text-dim); }
@@ -49,3 +81,26 @@ body {
 .chat-input-area { display: flex; gap: 10px; }
 #ai-input { flex: 1; padding: 8px; border-radius: 4px; border: none; }
 #send-ai-btn { background: var(--accent); border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+
+/* --- RESPONSIVE DESIGN (Επαναφορά) --- */
+@media (max-width: 900px) {
+    .grid-layout { grid-template-columns: 1fr; }
+    .app-container { flex-direction: column; }
+    .timeline-sidebar { 
+        width: 100%; 
+        height: 120px; 
+        display: flex; 
+        flex-direction: row; 
+        border-right: none;
+        border-bottom: 1px solid #334155;
+    }
+    .year-marker { 
+        min-width: 140px; 
+        border-left: none; 
+        border-bottom: 5px solid #334155; 
+    }
+    /* Responsive χρώματα στο κάτω μέρος */
+    .marker-person { border-bottom-color: var(--person); }
+    .marker-empire { border-bottom-color: var(--empire); }
+    .marker-invention { border-bottom-color: var(--invention); }
+}
