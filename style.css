@@ -50,7 +50,7 @@ body {
 }
 .vertical-line {
     position: absolute;
-    left: 25px; /* Εκεί που θα ευθυγραμμιστούν τα κυκλάκια */
+    left: 42px; /* Εκεί που θα ευθυγραμμιστούν τα κυκλάκια */
     top: 0;
     bottom: 0;
     width: 2px;
@@ -105,11 +105,11 @@ body {
 .marker-culture .dot { background-color: var(--culture); box-shadow: 0 0 8px var(--culture); }
 
 /* Κλάσεις για χρώματα ανάλογα με το EntityType */
-.marker-person { border-left: 5px solid var(--person) !important; } /* Αν είναι πρόσωπο, βάλε μπλε γραμμή αριστερά */
-.marker-empire { border-left: 5px solid var(--empire) !important; } /* Αν είναι αυτοκρατορία, βάλε πορτοκαλί γραμμή */
-.marker-invention { border-left: 5px solid var(--invention) !important; } /* Αν είναι εφεύρεση, βάλε πράσινη γραμμή */
-.marker-event { border-left-color: var(--event); }
-.marker-culture { border-left-color: var(--culture); }
+/*.marker-person { border-left: 5px solid var(--person) !important; } /* Αν είναι πρόσωπο, βάλε μπλε γραμμή αριστερά */
+/*.marker-empire { border-left: 5px solid var(--empire) !important; } /* Αν είναι αυτοκρατορία, βάλε πορτοκαλί γραμμή */
+/*.marker-invention { border-left: 5px solid var(--invention) !important; } /* Αν είναι εφεύρεση, βάλε πράσινη γραμμή */
+/*.marker-event { border-left-color: var(--event); }*/
+/*.marker-culture { border-left-color: var(--culture); }*/
 
 /* Hover & Active Effects */
 .year-marker:hover { background: #1e293b; }
