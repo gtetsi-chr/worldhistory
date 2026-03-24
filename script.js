@@ -174,7 +174,7 @@ async function displayEntity(item) {
         </div>
     `;
 
-    // 2. Wikipedia Λήμμα
+// 2. Wikipedia Λήμμα
     const wikiBody = document.getElementById('wiki-body');
     const topLink = document.getElementById('wiki-top-link');
     wikiBody.innerHTML = "<div style='padding:20px;'>Φόρτωση...</div>";
@@ -182,16 +182,12 @@ async function displayEntity(item) {
     if (item.Wiki_URL) {
         const wikiTitle = item.Wiki_URL.split('/').pop();
         
-        try {
-            // Α) Φέρνουμε την περίληψη για να πάρουμε την ΕΙΚΟΝΑ
-            const summaryRes = await fetch(`https://el.wikipedia.org/api/rest_v1/page/summary/${wikiTitle}`);
-            const summaryData = await summaryRes.json();
-            let imgHtml = "";
-            if (summaryData.thumbnail) {
-                imgHtml = `<img src="${summaryData.thumbnail.source}" class="wiki-main-img">`;
-            }
+        // Ορίζουμε το link στο header αμέσως
+        topLink.href = `https://el.wikipedia.org/wiki/${wikiTitle}`;
+        topLink.style.display = "block";
 
-            // Β) Φέρνουμε το ΚΕΙΜΕΝΟ
+        try {
+            // Χρησιμοποιούμε ΜΟΝΟ το Parse API για το κείμενο (πιο σταθερό)
             const parseUrl = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
             const parseRes = await fetch(parseUrl);
             const parseData = await parseRes.json();
@@ -202,11 +198,13 @@ async function displayEntity(item) {
                 // Διόρθωση links
                 cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
                 
-                // Ενημέρωση πάνω συνδέσμου
-                topLink.href = `https://el.wikipedia.org/wiki/${wikiTitle}`;
-                topLink.style.display = "block";
+                // ΕΔΩ Η ΑΛΛΑΓΗ: Αντί για νέο fetch, χρησιμοποιούμε το item.Image_Path 
+                // που έχουμε ήδη στο CSV ή το βρήκαμε για το tooltip.
+                let imgHtml = "";
+                if (item.Image_Path) {
+                    imgHtml = `<img src="${item.Image_Path}" class="wiki-main-img" onerror="this.style.display='none'">`;
+                }
 
-                // Εμφάνιση περιεχομένου (Εικόνα + Κείμενο + Κάτω Σύνδεσμος)
                 wikiBody.innerHTML = `
                     <div class="wiki-content">
                         ${imgHtml} 
@@ -219,13 +217,13 @@ async function displayEntity(item) {
                     </div>
                 `;
                 document.getElementById('image-container').scrollTop = 0;
+            } else {
+                wikiBody.innerHTML = "<div style='padding:20px;'>Το λήμμα δεν βρέθηκε.</div>";
             }
         } catch (err) {
-            wikiBody.innerHTML = "<div style='padding:20px;'>Σφάλμα σύνδεσης με Βικιπαίδεια.</div>";
+            console.error("Wiki Error:", err); // Θα βλέπεις το πραγματικό λάθος στην κονσόλα (F12)
+            wikiBody.innerHTML = "<div style='padding:20px;'>Σφάλμα κατά τη φόρτωση του κειμένου.</div>";
         }
-    } else {
-        topLink.style.display = "none";
-        wikiBody.innerHTML = "<div style='padding:20px;'>Δεν υπάρχει σύνδεσμος.</div>";
     }
 
     // 3. Χάρτης
