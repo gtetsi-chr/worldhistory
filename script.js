@@ -53,41 +53,90 @@ function generateTimeline() {
     const axis = document.getElementById('timeline-axis');
     axis.innerHTML = ""; 
 
-window.historyData.forEach((item, index) => {
-    const div = document.createElement('div');
-    
-    // Καθορισμός κλάσης χρώματος βάσει EntityType
-    let typeClass = "";
-    if (item.EntityType === "Person") typeClass = "marker-person";
-    else if (item.EntityType === "Empire/State") typeClass = "marker-empire";
-    else if (item.EntityType === "Invention") typeClass = "marker-invention";
-    else if (item.EntityType === "Event/War") typeClass = "marker-event";
-    else if (item.EntityType === "Movement/Culture") typeClass = "marker-culture";
+    // Επιλογή του tooltip element
+    const tooltip = document.getElementById('custom-tooltip');
 
-    div.className = `year-marker ${typeClass}`;
-    
-    const yearVal = parseInt(item.Start_Year);
-    const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
+    window.historyData.forEach((item, index) => {
+        const div = document.createElement('div');
+        
+        // Καθορισμός κλάσης χρώματος βάσει EntityType
+        let typeClass = "";
+        if (item.EntityType === "Person") typeClass = "marker-person";
+        else if (item.EntityType === "Empire/State") typeClass = "marker-empire";
+        else if (item.EntityType === "Invention") typeClass = "marker-invention";
+        else if (item.EntityType === "Event/War") typeClass = "marker-event";
+        else if (item.EntityType === "Movement/Culture") typeClass = "marker-culture";
 
-    // Προσθήκη του span class="dot" για το κυκλάκι
-    div.innerHTML = `
-        <span class="dot"></span>
-        <div class="marker-info">
-            <div class="year-number">${yearText}</div>
-            <div class="entity-name-preview">${item.Name}</div>
-        </div>
-    `;
+        div.className = `year-marker ${typeClass}`;
+        
+        const yearVal = parseInt(item.Start_Year);
+        const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
 
-    div.addEventListener('click', () => {
-        document.querySelectorAll('.year-marker').forEach(el => el.classList.remove('active'));
-        div.classList.add('active');
-        displayEntity(item);
+        // Προσθήκη του span class="dot" για το κυκλάκι
+        div.innerHTML = `
+            <span class="dot"></span>
+            <div class="marker-info">
+                <div class="year-number">${yearText}</div>
+                <div class="entity-name-preview">${item.Name}</div>
+            </div>
+        `;
+
+        // --- ΜΗΧΑΝΙΣΜΟΣ TOOLTIP ---
+        let tooltipTimeout;
+
+        div.addEventListener('mouseenter', (e) => {
+            // Εμφάνιση μετά από 0.5 δευτερόλεπτο hover
+            tooltipTimeout = setTimeout(async () => {
+                let imgHtml = "";
+                
+                // Προσπάθεια λήψης εικόνας από Wikipedia για το tooltip
+                if (item.Wiki_URL) {
+                    const title = item.Wiki_URL.split('/').pop();
+                    try {
+                        const res = await fetch(`https://el.wikipedia.org/api/rest_v1/page/summary/${title}`);
+                        const data = await res.json();
+                        if (data.thumbnail) {
+                            imgHtml = `<img src="${data.thumbnail.source}" style="width:100%; height:100px; object-fit:cover; border-radius:4px; margin-bottom:5px;">`;
+                        }
+                    } catch(err) {}
+                }
+
+                tooltip.innerHTML = `
+                    ${imgHtml}
+                    <strong style="color:var(--accent); display:block;">${item.Name}</strong>
+                    <small style="color:#94a3b8; line-height:1.2;">${item.BiographyShort.substring(0, 80)}...</small>
+                `;
+
+                tooltip.style.display = 'block';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.opacity = '1';
+            }, 500);
+        });
+
+        div.addEventListener('mousemove', (e) => {
+            // Το tooltip ακολουθεί το ποντίκι
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            tooltip.style.left = (e.clientX + 15) + 'px';
+        });
+
+        div.addEventListener('mouseleave', () => {
+            clearTimeout(tooltipTimeout);
+            tooltip.style.display = 'none';
+            tooltip.style.opacity = '0';
+        });
+        // --- ΤΕΛΟΣ ΜΗΧΑΝΙΣΜΟΥ TOOLTIP ---
+
+        div.addEventListener('click', () => {
+            document.querySelectorAll('.year-marker').forEach(el => el.classList.remove('active'));
+            div.classList.add('active');
+            displayEntity(item);
+        });
+
+        axis.appendChild(div);
+
+        if (index === 0) div.click(); 
     });
-
-    axis.appendChild(div);
-
-    if (index === 0) div.click(); 
-});
 }
 
 // 4. Προβολή Δεδομένων & Wikipedia Image
