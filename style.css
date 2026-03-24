@@ -11,14 +11,7 @@
     --event: #8b5cf6;     /* Μοβ */
     --culture: #ec4899;   /* Ροζ */
 }
-/* --- ΧΡΩΜΑΤΙΚΗ ΚΩΔΙΚΟΠΟΙΗΣΗ --- */
-:root {
-    --person: #3b82f6;    /* Μπλε */
-    --empire: #f97316;    /* Πορτοκαλί/Κόκκινο */
-    --invention: #10b981; /* Πράσινο */
-    --event: #8b5cf6;     /* Μοβ */
-    --culture: #ec4899;   /* Ροζ */
-}
+
 body {
     margin: 0; font-family: sans-serif;
     background: var(--bg); color: var(--text-main);
@@ -26,6 +19,44 @@ body {
 }
 
 .app-container { display: flex; width: 100%; }
+
+/* Header της Sidebar */
+.sidebar-header {
+    padding: 20px 15px;
+    background: #020617;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.sidebar-header h2 {
+    font-size: 1rem;
+    color: var(--accent);
+    margin: 0 0 10px 0;
+    letter-spacing: 2px;
+}
+#timelineSearch {
+    width: 100%;
+    padding: 8px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    color: white;
+    font-size: 0.8rem;
+}
+/* Η κάθετη γραμμή */
+.timeline-wrapper {
+    position: relative;
+    padding-left: 20px; /* Χώρος για τη γραμμή */
+}
+.vertical-line {
+    position: absolute;
+    left: 25px; /* Εκεί που θα ευθυγραμμιστούν τα κυκλάκια */
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #334155;
+    z-index: 1;
+}
 
 /* TIMELINE SIDEBAR */
 .timeline-sidebar {
@@ -44,14 +75,16 @@ body {
     display: none;
 }
 
+/* Το κάθε στοιχείο του χρονολογίου */
 .year-marker {
+    position: relative;
     display: flex;
-    align-items: center; /* Ευθυγράμμιση κύκλου με το κείμενο */
-    gap: 15px;           /* Απόσταση κύκλου από το κείμενο */
-    padding: 12px 15px;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 10px;
     cursor: pointer;
-    border-bottom: 1px solid #1e293b;
-    transition: all 0.3s ease;
+    z-index: 2; /* Πάνω από τη γραμμή */
+    transition: 0.3s;
 }
 
 /* Το κυκλάκι */
@@ -59,9 +92,9 @@ body {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: #334155; /* Γκρι αν δεν έχει κατηγορία */
-    flex-shrink: 0;            /* Να μη μικραίνει το κυκλάκι */
-    transition: transform 0.3s ease;
+    background: #475569;
+    border: 2px solid #020617; /* Για να "κόβει" τη γραμμή οπτικά */
+    flex-shrink: 0;
 }
 
 /* Χρώματα στα κυκλάκια ανά κατηγορία */
@@ -87,6 +120,11 @@ body {
     border-left: none; /* Σιγουρευόμαστε ότι δεν υπάρχει η παλιά γραμμή */
 }
 .year-marker.active .year-number { color: white; }
+
+/* Όταν η αναζήτηση κρύβει στοιχεία */
+.year-marker.hidden {
+    display: none;
+}
 
 .year-number { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
 .entity-name-preview { font-size: 0.75rem; color: var(--text-dim); }
