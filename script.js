@@ -53,43 +53,41 @@ function generateTimeline() {
     const axis = document.getElementById('timeline-axis');
     axis.innerHTML = ""; 
 
-    window.historyData.forEach((item, index) => {
-        const div = document.createElement('div');
+window.historyData.forEach((item, index) => {
+    const div = document.createElement('div');
+    
+    // Καθορισμός κλάσης χρώματος βάσει EntityType
+    let typeClass = "";
+    if (item.EntityType === "Person") typeClass = "marker-person";
+    else if (item.EntityType === "Empire/State") typeClass = "marker-empire";
+    else if (item.EntityType === "Invention") typeClass = "marker-invention";
+    else if (item.EntityType === "Event/War") typeClass = "marker-event";
+    else if (item.EntityType === "Movement/Culture") typeClass = "marker-culture";
 
-        // Καθορισμός κλάσης χρώματος βάσει EntityType
-        // Εδώ ελέγχουμε τι γράφει το CSV στη στήλη EntityType
-        let typeClass = "";
-        switch(item.EntityType) {
-            case "Person": typeClass = "marker-person"; break;
-            case "Empire/State": typeClass = "marker-empire"; break;
-            case "Invention": typeClass = "marker-invention"; break;
-            case "Event/War": typeClass = "marker-event"; break;
-            case "Movement/Culture": typeClass = "marker-culture"; break;
-        }
+    div.className = `year-marker ${typeClass}`;
+    
+    const yearVal = parseInt(item.Start_Year);
+    const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
 
-        // Τώρα δίνουμε στο div και την κλάση year-marker ΚΑΙ το χρώμα του
-        div.className = `year-marker ${typeClass}`;
-        
-        const yearVal = parseInt(item.Start_Year);
-        const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
-
-        div.innerHTML = `
+    // Προσθήκη του span class="dot" για το κυκλάκι
+    div.innerHTML = `
+        <span class="dot"></span>
+        <div class="marker-info">
             <div class="year-number">${yearText}</div>
             <div class="entity-name-preview">${item.Name}</div>
-        `;
+        </div>
+    `;
 
-        div.addEventListener('click', () => {
-            // Αφαίρεση προηγούμενου active
-            document.querySelectorAll('.year-marker').forEach(el => el.classList.remove('active'));
-            div.classList.add('active');
-            displayEntity(item);
-        });
-
-        axis.appendChild(div);
-
-        // Προβολή του πρώτου στοιχείου αυτόματα στην αρχή
-        if (index === 0) div.click();
+    div.addEventListener('click', () => {
+        document.querySelectorAll('.year-marker').forEach(el => el.classList.remove('active'));
+        div.classList.add('active');
+        displayEntity(item);
     });
+
+    axis.appendChild(div);
+
+    if (index === 0) div.click(); 
+});
 }
 
 // 4. Προβολή Δεδομένων & Wikipedia Image
