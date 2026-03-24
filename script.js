@@ -174,63 +174,58 @@ async function displayEntity(item) {
         </div>
     `;
 
-    // 2. Wikipedia Λήμμα (Αντικατάσταση της εικόνας με κείμενο)
+    // 2. Wikipedia Λήμμα
     const wikiBody = document.getElementById('wiki-body');
-    wikiBody.innerHTML = "<div style='color:var(--accent)'>Φόρτωση λήμματος Wikipedia...</div>";
+    const topLink = document.getElementById('wiki-top-link');
+    wikiBody.innerHTML = "<div style='padding:20px;'>Φόρτωση...</div>";
 
     if (item.Wiki_URL) {
-        // Παίρνουμε το όνομα του λήμματος από το URL (π.χ. Μέγας_Αλέξανδρος)
         const wikiTitle = item.Wiki_URL.split('/').pop();
         
         try {
-            // Χρήση του MediaWiki Action API για λήψη του κειμένου (section 0 = εισαγωγή)
-            const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
-            
-            const response = await fetch(url);
-            const data = await response.json();
+            // Α) Φέρνουμε την περίληψη για να πάρουμε την ΕΙΚΟΝΑ
+            const summaryRes = await fetch(`https://el.wikipedia.org/api/rest_v1/page/summary/${wikiTitle}`);
+            const summaryData = await summaryRes.json();
+            let imgHtml = "";
+            if (summaryData.thumbnail) {
+                imgHtml = `<img src="${summaryData.thumbnail.source}" class="wiki-main-img">`;
+            }
 
-            if (data.parse && data.parse.text) {
-                let cleanHtml = data.parse.text["*"];
+            // Β) Φέρνουμε το ΚΕΙΜΕΝΟ
+            const parseUrl = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
+            const parseRes = await fetch(parseUrl);
+            const parseData = await parseRes.json();
+
+            if (parseData.parse && parseData.parse.text) {
+                let cleanHtml = parseData.parse.text["*"];
                 
-                // Διόρθωση των links ώστε να ανοίγουν σε νέα καρτέλα
+                // Διόρθωση links
                 cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
                 
-                // Προσθήκη συνδέσμου για πλήρες άρθρο στο τέλος
-                const fullArticleLink = `
-                    <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #334155;">
-                        <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: #0645ad; font-weight: bold; text-decoration: none;">
-                            Διαβάστε ολόκληρο το άρθρο στη Wikipedia →
-                        </a>
-                    </div>`;
-                
-                if (data.parse && data.parse.text) {
-                let cleanHtml = data.parse.text["*"];
-                
-                // Διόρθωση των links
-                cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
-                
-                // Ενημέρωση του περιεχομένου
+                // Ενημέρωση πάνω συνδέσμου
+                topLink.href = `https://el.wikipedia.org/wiki/${wikiTitle}`;
+                topLink.style.display = "block";
+
+                // Εμφάνιση περιεχομένου (Εικόνα + Κείμενο + Κάτω Σύνδεσμος)
                 wikiBody.innerHTML = `
                     <div class="wiki-content">
+                        ${imgHtml} 
                         ${cleanHtml}
                         <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #a2a9b1;">
-                            <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: brown; font-weight: bold;">
+                            <a href="https://el.wikipedia.org/wiki/${wikiTitle}" target="_blank" style="color: brown; font-weight: bold; text-decoration: none; font-size:0.9rem;">
                                 Διαβάστε ολόκληρο το άρθρο στη Βικιπαίδεια →
                             </a>
                         </div>
                     </div>
                 `;
-                
-                // Αυτόματη κύλιση στην κορυφή του πλασίου κάθε φορά που αλλάζει η οντότητα
                 document.getElementById('image-container').scrollTop = 0;
-            } else {
-                wikiBody.innerHTML = `<p>Δεν βρέθηκε λήμμα για το: <b>${item.Name}</b>.</p>`;
             }
         } catch (err) {
-            wikiBody.innerHTML = "Σφάλμα κατά τη σύνδεση με την Wikipedia.";
+            wikiBody.innerHTML = "<div style='padding:20px;'>Σφάλμα σύνδεσης με Βικιπαίδεια.</div>";
         }
     } else {
-        wikiBody.innerHTML = "Δεν υπάρχει διαθέσιμος σύνδεσμος Wikipedia για αυτή την εγγραφή.";
+        topLink.style.display = "none";
+        wikiBody.innerHTML = "<div style='padding:20px;'>Δεν υπάρχει σύνδεσμος.</div>";
     }
 
     // 3. Χάρτης
