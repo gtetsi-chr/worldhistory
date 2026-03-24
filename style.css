@@ -315,3 +315,52 @@ body {
 #wiki-body .metadata {
     display: none !important;
 }
+/* Layout Κάρτας */
+.entity-main-info {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+    align-items: start;
+}
+.entity-portrait {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--accent);
+}
+.entity-stats p {
+    margin: 3px 0;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+.entity-stats strong {
+    color: var(--text-main);
+}
+.entity-title {
+    color: var(--accent);
+    margin: 5px 0;
+    font-size: 1.5rem;
+}
+.entity-bio {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    border-top: 1px solid #334155;
+    padding-top: 10px;
+}
+.info-tag {
+    background: #334155;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.contribution-highlight {
+    border-left: 3px solid #10b981; /* Πράσινο για τη συνεισφορά */
+    padding-left: 10px;
+    font-size: 0.9rem;
+    font-style: italic;
+}
