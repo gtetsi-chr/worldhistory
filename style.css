@@ -252,15 +252,38 @@ body {
     border: 1px solid #a2a9b1;
 }
 
-/* Ο τίτλος "Βικιπαίδεια" στο πάνω μέρος */
+/* Το header του Wiki με Flexbox για να μπει ο σύνδεσμος δεξιά */
 .wiki-header {
     background: #f8f9fa;
     color: #000;
     padding: 10px 15px;
-    font-weight: bold;
+    display: flex;
+    justify-content: space-between; /* Σπρώχνει τα στοιχεία στις άκρες */
+    align-items: center;
     border-bottom: 1px solid #a2a9b1;
     font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
-    font-size: 1.2rem;
+}
+.wiki-title-text {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.wiki-header-link {
+    font-size: 0.75rem;
+    color: brown !important;
+    text-decoration: none;
+    font-family: sans-serif;
+}
+.wiki-header-link:hover {
+    text-decoration: underline;
+}
+/* Στυλ για την εικόνα που θα βάζουμε μέσα στο λήμμα */
+.wiki-main-img {
+    float: right; /* Η εικόνα να περιβάλλεται από κείμενο */
+    margin: 0 0 10px 15px;
+    max-width: 120px;
+    border: 1px solid #a2a9b1;
+    padding: 2px;
+    background: white;
 }
 
 /* Το κυρίως σώμα του κειμένου */
@@ -282,11 +305,13 @@ body {
     text-decoration: underline;
 }
 
-/* ΚΡΥΒΟΥΜΕ ΤΑ BANNERS ΚΑΙ ΤΙΣ ΕΙΔΟΠΟΙΗΣΕΙΣ (ambox, navbox κτλ) */
+/* ΚΡΥΒΟΥΜΕ ΠΗΓΕΣ, ΠΑΡΑΠΟΜΠΕΣ ΚΑΙ BANNERS */
+#wiki-body .reflist, 
+#wiki-body .reference, 
+#wiki-body .references,
 #wiki-body .ambox, 
 #wiki-body .navbox, 
 #wiki-body .infobox, 
-#wiki-body .metadata, 
-#wiki-body .mw-empty-elt {
+#wiki-body .metadata {
     display: none !important;
 }
