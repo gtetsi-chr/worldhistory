@@ -158,18 +158,45 @@ function createCustomIcon(type) {
 // 4. Προβολή Δεδομένων & Wikipedia Image
 async function displayEntity(item) {
     // 1. Ενημέρωση Αριστερής Κάρτας (CSV Data)
-    const cardContent = document.getElementById('card-content');
+const cardContent = document.getElementById('card-content');
+    
+    // Αρχικά φέρνουμε την εικόνα από τη Wikipedia (όπως στο tooltip)
+    let wikiImg = "https://via.placeholder.com/150?text=No+Image"; // Placeholder αν αποτύχει
+    if (item.Wiki_URL) {
+        const title = item.Wiki_URL.split('/').pop();
+        try {
+            const res = await fetch(`https://el.wikipedia.org/api/rest_v1/page/summary/${title}`);
+            const data = await res.json();
+            if (data.thumbnail) wikiImg = data.thumbnail.source;
+        } catch(e) {}
+    }
+
+    // Σύνθεση της κάρτας με όλα τα πεδία
     cardContent.innerHTML = `
-        <span class="era-badge">${item.EraName || 'Ιστορική Περίοδος'}</span>
-        <h2 style="color:#38bdf8; margin: 0 0 10px 0;">${item.Name}</h2>
-        <p style="margin-bottom: 10px;">
-            <strong>${item.CategoryName}</strong> 
-            ${item.PlaceOfOrigin ? `| <span style="color:#94a3b8">${item.PlaceOfOrigin}</span>` : ''}
-        </p>
-        <p style="line-height: 1.5;">${item.BiographyShort}</p>
-        <div class="contribution-box">
-            <strong>Συνεισφορά:</strong> ${item.KeyContribution}
-            ${item.School_Tag ? `<span class="school-tag">Σχολή/Ρεύμα: ${item.School_Tag}</span>` : ''}
+        <div class="card-header">
+            <span class="era-badge">${item.EraName || 'Ιστορική Περίοδος'}</span>
+            <h2 class="entity-title">${item.Name}</h2>
+        </div>
+
+        <div class="entity-main-info">
+            <img src="${wikiImg}" class="entity-portrait">
+            <div class="entity-stats">
+                <p><strong>Τύπος:</strong> ${item.CategoryName}</p>
+                <p><strong>Καταγωγή:</strong> ${item.PlaceOfOrigin || 'Άγνωστο'}</p>
+                <p><strong>Περίοδος:</strong> ${item.Start_Year} έως ${item.End_Year}</p>
+                ${item.Gender ? `<p><strong>Φύλο:</strong> ${item.Gender}</p>` : ''}
+            </div>
+        </div>
+
+        <div class="entity-bio">
+            <p>${item.BiographyShort}</p>
+        </div>
+
+        <div class="entity-footer">
+            ${item.School_Tag ? `<div class="info-tag"><strong>Σχολή:</strong> ${item.School_Tag}</div>` : ''}
+            <div class="contribution-highlight">
+                <strong>Συνεισφορά:</strong> ${item.KeyContribution}
+            </div>
         </div>
     `;
 
