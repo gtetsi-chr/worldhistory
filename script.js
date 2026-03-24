@@ -134,3 +134,21 @@ async function displayEntity(item) {
         map.flyTo(coords, 6);
     }
 }
+
+// Λειτουργία Αναζήτησης μέσα στο Χρονολόγιο
+document.getElementById('timelineSearch').addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase(); // Τι έγραψε ο χρήστης
+    const markers = document.querySelectorAll('.year-marker');
+
+    markers.forEach(marker => {
+        const name = marker.querySelector('.entity-name-preview').innerText.toLowerCase();
+        const year = marker.querySelector('.year-number').innerText.toLowerCase();
+        
+        // Αν το όνομα ή η χρονιά περιλαμβάνουν αυτό που γράψαμε
+        if (name.includes(term) || year.includes(term)) {
+            marker.classList.remove('hidden'); // Δείξε το
+        } else {
+            marker.classList.add('hidden'); // Κρύψτο
+        }
+    });
+});
