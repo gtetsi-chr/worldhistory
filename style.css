@@ -22,12 +22,10 @@ body {
 
 /* Header της Sidebar */
 .sidebar-header {
-    padding: 20px 15px;
+	padding: 20px 15px;
     background: #020617;
-    position: sticky;
-    top: 0;
-	z-index: 1000; /* Να είναι πάνω από τα markers */
-    overflow: visible; /* ΕΔΩ: Επιτρέπει στο search να "πετάξει" έξω */
+    z-index: 1000;
+    overflow: visible; /* Ζωτικής σημασίας! */
 }
 .sidebar-header h2 {
     font-size: 1rem;
@@ -48,13 +46,21 @@ body {
 	z-index: 1;
 }
 #timelineSearch:focus {
-	transform: scaleX(1.3); 
-    transform-origin: left; /* Να μεγαλώσει προς τα δεξιά */
+	width: 150%; /* Τώρα θα "πετάξει" έξω από τη sidebar χωρίς να κρυφτεί */
+    position: relative;
+    z-index: 10000; /* Πάνω από όλα */
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
-    z-index: 9999;
+    box-shadow: 10px 0 20px rgba(0,0,0,0.5); /* Σκιά για να φαίνεται πάνω από τον χάρτη */
 }
+/* 3. Η νέα κλάση που αναλαμβάνει το σκρολάρισμα */
+.timeline-scroll-container {
+    flex: 1; /* Παίρνει όλο τον υπόλοιπο χώρο */
+    overflow-y: auto; /* Μόνο εδώ έχουμε scrollbar */
+    overflow-x: hidden; /* Δεν θέλουμε οριζόντιο scroll στη λίστα */
+    scrollbar-width: none;
+}
+.timeline-scroll-container::-webkit-scrollbar { display: none; }
 
 /* Η κάθετη γραμμή */
 .timeline-wrapper {
@@ -75,14 +81,11 @@ body {
 .timeline-sidebar {
     width: 200px;
     background: #020617;
-    overflow-y: auto; /* Επιτρέπει το σκρολάρισμα */
     border-right: 1px solid #334155;
-    position: relative; 
-    z-index: 100; /* Υψηλό νούμερο για να είναι πάνω από όλα */
-	
-    /* Αυτές οι 3 εντολές εξαφανίζουν τη μπάρα (το γκρίζο μπαστούνι) αλλά αφήνουν το σκρολάρισμα να δουλεύει */
-    scrollbar-width: none; /* Για Firefox */
-    -ms-overflow-style: none; /* Για Internet Explorer */
+    display: flex;
+    flex-direction: column; /* Βάζει το header πάνω και τη λίστα κάτω */
+    position: relative;
+    z-index: 999; /* Να είναι πάνω από το main content οπωσδήποτε */
 }
 
 /* Για Chrome, Safari και Edge */
@@ -119,15 +122,6 @@ body {
 .marker-event .dot { border: 3px solid var(--event); box-shadow: 0 0 8px var(--event); }
 .marker-culture .dot { border: 3px solid var(--culture); box-shadow: 0 0 8px var(--culture); }
 
-
-
-/* Κλάσεις για χρώματα ανάλογα με το EntityType */
-/*.marker-person { border-left: 5px solid var(--person) !important; } /* Αν είναι πρόσωπο, βάλε μπλε γραμμή αριστερά */
-/*.marker-empire { border-left: 5px solid var(--empire) !important; } /* Αν είναι αυτοκρατορία, βάλε πορτοκαλί γραμμή */
-/*.marker-invention { border-left: 5px solid var(--invention) !important; } /* Αν είναι εφεύρεση, βάλε πράσινη γραμμή */
-/*.marker-event { border-left-color: var(--event); }*/
-/*.marker-culture { border-left-color: var(--culture); }*/
-
 /* Hover & Active Effects */
 .year-marker:hover { background: #1e293b73; } /*1e293b*/
 .year-marker:hover .dot { transform: scale(1.3); } /* Μεγαλώνει λίγο το κυκλάκι στο hover */
@@ -147,7 +141,7 @@ body {
 .entity-name-preview { font-size: 0.75rem; color: var(--text-dim); }
 
 /* MAIN CONTENT */
-.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; z-index: 1; /* Χαμηλό νούμερο */}
+.main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; z-index: 1; }
 .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
 
 .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
