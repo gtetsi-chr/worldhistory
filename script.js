@@ -234,13 +234,15 @@ const cardContent = document.getElementById('card-content');
     const showMoreBtn = document.getElementById('show-more-wiki');
     const topLink = document.getElementById('wiki-top-link');
     
-    // Επαναφορά στην αρχική κατάσταση
+    // ΠΛΗΡΗΣ ΕΠΑΝΑΦΟΡΑ: Καθαρίζουμε τα πάντα πριν τη νέα αναζήτηση
     wikiIntro.innerHTML = "Αναζήτηση στην Wikipedia...";
+    wikiIntro.style.display = "block"; // Επαναφορά εμφάνισης εισαγωγής
     wikiFullContent.innerHTML = "";
     wikiFullContent.style.display = "none";
+    
+    showMoreBtn.innerText = "Δείξε περισσότερα"; // Επαναφορά κειμένου κουμπιού
     showMoreBtn.style.display = "none";
 
-	// Καθαρισμός του ονόματος από το URL
     if (item.Wiki_URL) {
         const urlParts = item.Wiki_URL.split('/');
         const wikiTitle = urlParts[urlParts.length - 1];
@@ -251,14 +253,13 @@ const cardContent = document.getElementById('card-content');
         }
 
         try {
-            // Φέρνουμε πρώτα την εισαγωγή (Section 0)
+			// Φέρνουμε πρώτα την εισαγωγή (Section 0)
             const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
             const response = await fetch(url);
             const data = await response.json();
 
             if (data.parse && data.parse.text) {
                 let cleanHtml = data.parse.text["*"];
-				// Διόρθωση links
                 cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
                 
 				// Χρήση της εικόνας που ήδη βρήκαμε για το tooltip (αν υπάρχει) ή από το CSV
@@ -268,13 +269,13 @@ const cardContent = document.getElementById('card-content');
                 }
 
                 wikiIntro.innerHTML = `<div class="wiki-content">${imgHtml}${cleanHtml}</div>`;
-                showMoreBtn.style.display = "block"; // Εμφάνιση κουμπιού
+                showMoreBtn.style.display = "block";
 
                 // Λειτουργία κουμπιού "Δείξε περισσότερα"
                 showMoreBtn.onclick = async () => {
                     showMoreBtn.innerText = "Φόρτωση...";
                     try {
-                        // Φέρνουμε ΟΛΟ το κείμενο εκτός από το section 0 που ήδη έχουμε
+						// Φέρνουμε ΟΛΟ το κείμενο εκτός από το section 0 που ήδη έχουμε
                         const fullUrl = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&mobileformat=1`;
                         const fullRes = await fetch(fullUrl);
                         const fullData = await fullRes.json();
@@ -282,12 +283,14 @@ const cardContent = document.getElementById('card-content');
                         let fullHtml = fullData.parse.text["*"];
                         fullHtml = fullHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
                         
-                        wikiFullContent.innerHTML = fullHtml;
+                        // Απόκρυψη εισαγωγής και εμφάνιση πλήρους κειμένου
+                        wikiIntro.style.display = "none";
+                        wikiFullContent.innerHTML = `<div class="wiki-content">${fullHtml}</div>`;
                         wikiFullContent.style.display = "block";
-                        wikiIntro.style.display = "none"; // Κρύβουμε την εισαγωγή για να μην διπλασιάζεται
-                        showMoreBtn.style.display = "none"; // Κρύβουμε το κουμπί
+                        showMoreBtn.style.display = "none";
                     } catch (err) {
                         showMoreBtn.innerText = "Σφάλμα φόρτωσης";
+                        console.error("Wiki Full Load Error:", err);
                     }
                 };
 
