@@ -364,3 +364,83 @@ body {
     font-size: 0.9rem;
     font-style: italic;
 }
+.entity-card-v2 {
+    text-align: left;
+    color: var(--text-main);
+}
+
+.card-main-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.entity-img-v2 {
+    width: 100px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--accent);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.entity-header-info {
+    flex: 1;
+}
+
+.era-badge-v2 {
+    background: var(--accent);
+    color: #020617;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.entity-name-v2 {
+    margin: 5px 0;
+    font-size: 1.6rem;
+    color: var(--accent);
+}
+
+.entity-type-v2 {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin: 0;
+}
+
+.entity-years-v2 {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.entity-bio-v2 {
+    line-height: 1.5;
+    font-size: 0.95rem;
+    border-top: 1px solid #334155;
+    padding-top: 10px;
+    margin-bottom: 15px;
+}
+
+.person-extra-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Χωρίζει τις πληροφορίες σε 2 στήλες */
+    gap: 5px 15px;
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+}
+
+.person-extra-info p { margin: 0; }
+
+.contribution-v2 {
+    border-left: 3px solid #10b981;
+    padding-left: 12px;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 10px;
+    border-radius: 0 6px 6px 0;
+}
