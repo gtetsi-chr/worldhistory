@@ -179,3 +179,38 @@ body {
     .marker-empire { border-bottom-color: var(--empire); }
     .marker-invention { border-bottom-color: var(--invention); }
 }
+.custom-tooltip {
+    position: fixed;
+    display: none; /* Κρυφό αρχικά */
+    background: rgba(2, 6, 23, 0.95); /* Πολύ σκούρο μπλε/μαύρο */
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--accent);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    z-index: 10000;
+    width: 250px;
+    pointer-events: none; /* Για να μην εμποδίζει το ποντίκι */
+    font-size: 0.85rem;
+    transition: opacity 0.3s ease;
+}
+
+.tooltip-img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.tooltip-title {
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.tooltip-text {
+    color: var(--text-dim);
+    line-height: 1.4;
+}
