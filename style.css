@@ -35,14 +35,23 @@ body {
     letter-spacing: 2px;
 }
 #timelineSearch {
-    width: 100%;
+    width: 95%;
     padding: 8px;
     background: #1e293b;
     border: 1px solid #334155;
     border-radius: 4px;
     color: white;
     font-size: 0.8rem;
+	position: relative;
+	transition: width 0.3s ease;
+	z-index: 1;
 }
+#timelineSearch:focus {
+    width: 150%; 
+    position: relative;
+    z-index: 9999;
+}
+
 /* Η κάθετη γραμμή */
 .timeline-wrapper {
     position: relative;
@@ -50,7 +59,7 @@ body {
 }
 .vertical-line {
     position: absolute;
-    left: 42px; /* Εκεί που θα ευθυγραμμιστούν τα κυκλάκια */
+    left: 40px; /* Εκεί που θα ευθυγραμμιστούν τα κυκλάκια */
     top: 0;
     bottom: 0;
     width: 2px;
