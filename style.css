@@ -26,7 +26,8 @@ body {
     background: #020617;
     position: sticky;
     top: 0;
-    z-index: 10;
+	z-index: 1000; /* Να είναι πάνω από τα markers */
+    overflow: visible; /* ΕΔΩ: Επιτρέπει στο search να "πετάξει" έξω */
 }
 .sidebar-header h2 {
     font-size: 1rem;
