@@ -279,11 +279,11 @@ body {
 /* Στυλ για την εικόνα που θα βάζουμε μέσα στο λήμμα */
 .wiki-main-img {
     float: right; /* Η εικόνα να περιβάλλεται από κείμενο */
-    margin: 0 0 10px 15px;
-    max-width: 120px;
-    border: 1px solid #a2a9b1;
-    padding: 2px;
-    background: white;
+	margin: 5px 0 10px 15px;
+    max-width: 150px; /* Λίγο μεγαλύτερη για να φαίνεται */
+    height: auto;
+    border: 1px solid #ccc;
+    display: block;
 }
 
 /* Το κυρίως σώμα του κειμένου */
