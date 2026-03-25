@@ -109,6 +109,9 @@ function generateTimeline() {
         axis.appendChild(div);
         if (index === 0) div.click(); // Επιλογή του πρώτου στοιχείου αυτόματα
     });
+
+	updateZoomAndRank(); // για να "φιλτραριστούν" αμέσως τα Rank!
+	
 }
 
 // 4. Εμφάνιση των στοιχείων της επιλεγμένης οντότητας
