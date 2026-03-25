@@ -352,34 +352,38 @@ document.getElementById('timelineSearch').addEventListener('input', function(e) 
         }
     });
 });
+
 // --- ΛΕΙΤΟΥΡΓΙΑ AI CHATBOX ---
 
 // Μεταβλητή για να ξέρουμε ποιο entity είναι επιλεγμένο αυτή τη στιγμή
-let currentSelectedEntity = null;
+let currentSelectedEntity = null;// Ενημέρωση της currentSelectedEntity όταν επιλέγεται κάτι (θα το βάλουμε μέσα στην displayEntity αργότερα)
 
-// Ενημέρωση της currentSelectedEntity όταν επιλέγεται κάτι (θα το βάλουμε μέσα στην displayEntity αργότερα)
-async function callAI() {
+// --- ΛΕΙΤΟΥΡΓΙΑ ΣΥΝΟΜΙΛΙΑΣ ΜΕ AI (CLOUDFLARE WORKER) ---
+	async function callAI() {
     const inputField = document.getElementById('ai-input');
     const chatBox = document.getElementById('chat-box');
     const question = inputField.value.trim();
 
     if (!question) return;
+    
+    // Έλεγχος αν έχει επιλεγεί κάτι
     if (!window.currentSelectedEntity) {
-        chatBox.innerHTML += `<p style="color:orange;">⚠️ Παρακαλώ επιλέξτε πρώτα ένα πρόσωπο ή γεγονός από το χρονολόγιο.</p>`;
+        chatBox.innerHTML += `<p style="color:orange;">⚠️ Παρακαλώ επιλέξτε πρώτα κάτι από το χρονολόγιο.</p>`;
         return;
     }
 
-    // Εμφάνιση ερώτησης χρήστη
+    // Εμφάνιση ερώτησης
     chatBox.innerHTML += `<p><strong>Εσείς:</strong> ${question}</p>`;
-    inputField.value = ""; // Καθαρισμός input
+    inputField.value = ""; 
     
-    // Εμφάνιση "Σκέφτεται..."
+    // Animation "Σκέφτεται..."
     const loadingId = "loading-" + Date.now();
-    chatBox.innerHTML += `<p id="${loadingId}" style="color:var(--accent);">🤖 Η AI σκέφτεται...</p>`;
+    chatBox.innerHTML += `<p id="${loadingId}" style="color:var(--accent);">🤖 Σκέφτομαι...</p>`;
     chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-        const WORKER_URL = "https://history.gtetsi.workers.dev"; // Π.χ. https://...workers.dev
+        // Εδώ βάζεις το URL που πήρες από το Cloudflare
+        const WORKER_URL = "ΤΟ_URL_ΣΟΥ_ΕΔΩ"; 
 
         const response = await fetch(WORKER_URL, {
             method: "POST",
@@ -393,17 +397,20 @@ async function callAI() {
 
         const data = await response.json();
         
-        // Αφαίρεση του "Σκέφτεται..." και εμφάνιση απάντησης
-        document.getElementById(loadingId).remove();
+        // Αφαίρεση του loading και εμφάνιση απάντησης
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.remove();
+        
         chatBox.innerHTML += `<p><strong>🤖 AI:</strong> ${data.text}</p>`;
         chatBox.scrollTop = chatBox.scrollHeight;
 
     } catch (err) {
-        document.getElementById(loadingId).innerText = "❌ Σφάλμα σύνδεσης με την AI.";
+        const loadingElem = document.getElementById(loadingId);
+        if (loadingElem) loadingElem.innerText = "❌ Σφάλμα σύνδεσης με την AI.";
     }
 }
 
-// Event Listeners για το κουμπί και το Enter
+// Listeners για το κουμπί και το πλήκτρο Enter
 document.getElementById('send-ai-btn').addEventListener('click', callAI);
 document.getElementById('ai-input').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') callAI();
