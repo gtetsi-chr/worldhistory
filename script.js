@@ -234,6 +234,7 @@ function createCustomIcon(type) {
 }
 
 // 8. Λειτουργία AI
+// 8. Λειτουργία AI (Εμπλουτισμένο Context)
 async function callAI() {
     const inputField = document.getElementById('ai-input');
     const chatBox = document.getElementById('chat-box');
@@ -241,6 +242,9 @@ async function callAI() {
 
     if (!question || !window.currentSelectedEntity) return;
 
+    const entity = window.currentSelectedEntity; // Για ευκολία
+
+    // Εμφάνιση ερώτησης χρήστη
     chatBox.innerHTML += `<p><strong>Εσείς:</strong> ${question}</p>`;
     inputField.value = ""; 
     
@@ -248,22 +252,39 @@ async function callAI() {
     chatBox.innerHTML += `<p id="${loadingId}" style="color:var(--accent);">🤖 Σκέφτομαι...</p>`;
     chatBox.scrollTop = chatBox.scrollHeight;
 
+    // Εμπλουτισμός του Context με όλα τα διαθέσιμα πεδία από το CSV
+    const enrichedContext = `
+        Όνομα: ${entity.Name}
+        Τύπος: ${entity.EntityType}
+        Εποχή/Περίοδος: ${entity.EraName || 'Άγνωστη'}
+        Χρονολογία: ${entity.Start_Year} έως ${entity.End_Year}
+        Ιδιότητα: ${entity.CategoryName || ''}
+        Σχολή/Ρεύμα: ${entity.School_Tag || ''}
+        Βιογραφικό: ${entity.BiographyShort}
+        Κύρια Συνεισφορά & Έργα: ${entity.KeyContribution || ''}
+        Περιοχή: ${entity.PlaceOfOrigin || ''}
+    `.trim();
+
     try {
         const response = await fetch("https://history.gtetsi.workers.dev/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 question: question,
-                entityName: window.currentSelectedEntity.Name,
-                context: window.currentSelectedEntity.BiographyShort + " " + window.currentSelectedEntity.KeyContribution
+                entityName: entity.Name,
+                context: enrichedContext // Στέλνουμε το νέο, αναλυτικό context
             })
         });
+        
         const data = await response.json();
-        document.getElementById(loadingId).remove();
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
         chatBox.innerHTML += `<p><strong>🤖 AI:</strong> ${data.text}</p>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     } catch (err) {
-        document.getElementById(loadingId).innerText = "❌ Σφάλμα σύνδεσης.";
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.innerText = "❌ Σφάλμα σύνδεσης με την AI.";
     }
 }
 
