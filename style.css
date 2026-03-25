@@ -537,3 +537,38 @@ body {
     .marker-empire { border-bottom-color: var(--empire); }
     .marker-invention { border-bottom-color: var(--invention); }
 }
+
+/* ==========================================================================
+   9. Το πλαίσιο του slider στο κάτω μέρος του sidebar 
+   ========================================================================== */
+
+.zoom-controls {
+    padding: 15px;
+    background: #1e293b; /* Ίδιο χρώμα με την κάρτα */
+    border-top: 1px solid #334155;
+    text-align: center;
+}
+
+/* Το ίδιο το slider */
+#zoomSlider {
+    width: 70%;
+    cursor: pointer;
+    accent-color: var(--accent); /* Θα πάρει το γαλάζιο χρώμα σου */
+}
+
+.zoom-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: 5px;
+}
+
+/* Η "μαγεία": Ορίζουμε μια μεταβλητή για το κενό ανάμεσα στα γεγονότα */
+.timeline-wrapper {
+    --zoom-gap: 50px; /* Αυτό θα αλλάζει από το JavaScript */
+    transition: all 0.3s ease; /* Για να γίνεται ομαλά το τέντωμα */
+}
+
+/* Εφαρμόζουμε το κενό στα markers */
+.year-marker {
+    margin-bottom: var(--zoom-gap) !important;
+}
