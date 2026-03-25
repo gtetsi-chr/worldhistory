@@ -1,19 +1,18 @@
 /* ==========================================================================
-   1. ΓΕΝΙΚΕΣ ΡΥΘΜΙΣΕΙΣ & ΜΕΤΑΒΛΗΤΕΣ (Variables)
+   1. ΜΕΤΑΒΛΗΤΕΣ ΚΑΙ ΓΕΝΙΚΑ ΣΤΥΛ (Global Styles)
    ========================================================================== */
 :root {
-    --bg: #0f172a;           /* Σκούρο φόντο εφαρμογής */
-    --card-bg: #1e293b;      /* Φόντο για τις κάρτες */
-    --accent: #38bdf8;       /* Χρώμα έμφασης (γαλάζιο) */
-    --text-main: #f8fafc;    /* Κύριο κείμενο */
-    --text-dim: #94a3b8;     /* Δευτερεύον κείμενο (γκριζωπό) */
-    
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --accent: #38bdf8;
+    --text-main: #f8fafc;
+    --text-dim: #94a3b8;
     /* Χρώματα ανά κατηγορία οντότητας */
-    --person: #3b82f6;       /* Μπλε */
-    --empire: #f97316;       /* Πορτοκαλί/Κόκκινο */
-    --invention: #10b981;    /* Πράσινο */
-    --event: #8b5cf6;        /* Μοβ */
-    --culture: #ec4899;      /* Ροζ */
+    --person: #3b82f6;    /* Μπλε */
+    --empire: #f97316;    /* Πορτοκαλί/Κόκκινο */
+    --invention: #10b981; /* Πράσινο */
+    --event: #8b5cf6;     /* Μοβ */
+    --culture: #ec4899;   /* Ροζ */
 }
 
 body {
@@ -23,7 +22,7 @@ body {
     color: var(--text-main);
     display: flex; 
     height: 100vh; 
-    overflow: hidden; /* Αποτρέπει το scroll σε όλο το σώμα */
+    overflow: hidden; /* Αποτρέπει το scroll σε όλο το σώμα της σελίδας */
 }
 
 .app-container { 
@@ -32,18 +31,18 @@ body {
 }
 
 /* ==========================================================================
-   2. ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΙΚΗ ΣΤΗΛΗ (Sidebar & Timeline)
+   2. ΑΡΙΣΤΕΡΗ ΠΛΕΥΡΙΚΗ ΣΤΗΛΗ (Timeline Sidebar)
    ========================================================================== */
 .timeline-sidebar {
     width: 300px;
+    min-width: 300px;
     background: #020617;
     border-right: 1px solid #1e293b;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0;
 }
 
-/* Επικεφαλίδα Sidebar & Αναζήτηση */
+/* Επικεφαλίδα και Αναζήτηση στην πλευρική στήλη */
 .sidebar-header {
     padding: 20px 15px;
     background: #020617;
@@ -56,23 +55,26 @@ body {
     color: var(--accent);
     margin: 0 0 10px 0;
     letter-spacing: 2px;
+    text-transform: uppercase;
 }
 
 #timelineSearch {
     width: 100%;
     padding: 10px;
-    background: #1e293b;
-    border: 1px solid #334155;
     border-radius: 6px;
+    border: 1px solid #334155;
+    background: #1e293b;
     color: white;
+    font-size: 0.9rem;
     box-sizing: border-box;
 }
 
-/* Container για το scroll του Timeline */
+/* Δομή του κατακόρυφου Timeline */
 .timeline-scroll-container {
     flex: 1;
-    overflow-y: auto;
-    padding: 20px 10px;
+    overflow-y: auto; /* Επιτρέπει το σκρολάρισμα μόνο εδώ */
+    padding: 20px 0;
+    position: relative;
 }
 
 .timeline-wrapper {
@@ -80,51 +82,320 @@ body {
     padding-left: 40px;
 }
 
-/* Η κάθετη γραμμή του Timeline */
 .vertical-line {
     position: absolute;
-    left: 15px;
+    left: 20px;
     top: 0;
     bottom: 0;
     width: 2px;
     background: #334155;
+    z-index: 0;
 }
 
-/* Μεμονωμένα σημεία (Markers) στο Timeline */
+/* ==========================================================================
+   3. ΣΤΟΙΧΕΙΑ ΧΡΟΝΟΛΟΓΙΟΥ (Year Markers & Tooltips)
+   ========================================================================== */
 .year-marker {
     position: relative;
-    margin-bottom: 30px;
+    padding: 15px 20px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    margin-bottom: 10px;
+    border-radius: 8px 0 0 8px;
 }
 
-.year-marker.hidden { display: none; } /* Για το φιλτράρισμα αναζήτησης */
+.year-marker:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
 
-/* Οι τελείες πάνω στη γραμμή */
+.year-marker.active {
+    background: rgba(56, 189, 248, 0.15);
+    border-right: 3px solid var(--accent);
+}
+
+/* Η τελεία πάνω στη γραμμή */
 .dot {
     position: absolute;
-    left: -32px;
-    top: 6px;
-    width: 14px;
-    height: 14px;
-    background: #334155;
+    left: -25px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    border: 3px solid #020617;
-    z-index: 2;
+    background: #334155;
+    border: 2px solid var(--bg);
     transition: all 0.3s;
 }
 
-/* Χρώματα τελείων ανάλογα με την κατηγορία */
+.year-marker:hover .dot {
+    transform: translateY(-50%) scale(1.3);
+    background: var(--accent);
+}
+
+/* Χρωματική κωδικοποίηση στις τελείες ανά τύπο */
 .marker-person .dot { background: var(--person); }
 .marker-empire .dot { background: var(--empire); }
 .marker-invention .dot { background: var(--invention); }
 .marker-event .dot { background: var(--event); }
 .marker-culture .dot { background: var(--culture); }
 
-/* Εφέ όταν περνάμε το ποντίκι ή επιλέγουμε ένα στοιχείο */
-.year-marker:hover .dot { transform: scale(1.3); box-shadow: 0 0 10px var(--accent); }
-.year-marker.active .dot { background: var(--accent); transform: scale(1.4); }
-.year-marker.active .entity-name-preview { color: var(--accent); font-weight: bold; }
+.marker-info { pointer-events: none; }
 
-.marker-info { padding-left: 10px; }
-.year-number { font
+.year-number {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+.entity-name-preview {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+}
+
+/* Το αναδυόμενο παράθυρο (Tooltip) στο hover */
+.custom-tooltip {
+    position: fixed;
+    background: #1e293b;
+    border: 1px solid var(--accent);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    width: 220px;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+    display: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* ==========================================================================
+   4. ΚΥΡΙΩΣ ΠΕΡΙΕΧΟΜΕΝΟ (Main Layout)
+   ========================================================================== */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    background: #020617;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-header {
+    height: 0px; 
+    background: #020617;
+    border-bottom: 1px solid #1e293b;
+}
+
+/* Διάταξη Grid: Αριστερή στήλη πληροφοριών & Δεξιά στήλη Χάρτη/Wiki */
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ==========================================================================
+   5. ΚΕΝΤΡΙΚΗ ΚΑΡΤΑ ΟΝΤΟΤΗΤΑΣ (Entity Card V2)
+   ========================================================================== */
+.entity-card-v2 { color: var(--text-main); }
+
+.card-main-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    align-items: start;
+}
+
+.entity-img-v2 {
+    width: 150px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid var(--accent);
+}
+
+.entity-header-info { flex: 1; }
+
+.era-badge-v2 {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.entity-name-v2 {
+    font-size: 2.2rem;
+    margin: 0 0 5px 0;
+    line-height: 1.1;
+}
+
+.entity-type-v2 {
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.entity-years-v2 {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+}
+
+.entity-bio-v2 {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    border-top: 1px solid #334155;
+    padding-top: 15px;
+    margin-bottom: 15px;
+}
+
+/* Επιπλέον πληροφορίες για Πρόσωπα */
+.person-extra-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px 15px;
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+}
+
+.person-extra-info p { margin: 0; }
+
+/* Στυλ Συνεισφοράς (Key Contribution) */
+.contribution-v2 {
+    border-left: 3px solid #10b981;
+    padding-left: 12px;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 10px;
+    border-radius: 0 6px 6px 0;
+}
+
+/* ==========================================================================
+   6. AI CHAT SECTION
+   ========================================================================== */
+.ai-section {
+    margin-top: 20px;
+    background: #0f172a;
+    border: 1px solid var(--accent);
+}
+
+#chat-box {
+    height: 150px;
+    overflow-y: auto;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.ai-input-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+#ai-input {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+#send-ai-btn {
+    background: var(--accent);
+    border: none;
+    color: #000;
+    padding: 0 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   7. MEDIA COLUMN (Map & Wikipedia)
+   ========================================================================== */
+.media-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Wikipedia Card */
+.wikipedia-style {
+    background: #fff !important;
+    color: #333 !important;
+    padding: 0 !important;
+}
+
+.wiki-header {
+    background: #f6f6f6;
+    padding: 10px 15px;
+    border-bottom: 1px solid #a2a9b1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wiki-content {
+    font-family: serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Wikipedia Images (περιορισμός μεγέθους μέσα στο card) */
+.wiki-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 10px auto;
+}
+
+/* Κουμπί 'Δείξε περισσότερα' της Wikipedia */
+.wiki-more-btn {
+    display: block;
+    width: fit-content;
+    margin: 15px auto;
+    padding: 8px 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #a2a9b1;
+    color: #3b82f6;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.wiki-more-btn:hover {
+    background-color: #eee;
+}
+
+/* ==========================================================================
+   8. ΒΟΗΘΗΤΙΚΕΣ ΚΛΑΣΕΙΣ (Utilities)
+   ========================================================================== */
+.hidden { display: none !important; }
+
+/* Custom Marker στον Χάρτη */
+.custom-map-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
