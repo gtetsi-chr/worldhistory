@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initMap() {
-    map = L.map('map').setView([37.98, 23.72], 4);
+    map = L.map('map', { scrollWheelZoom: false }).setView([37.98, 23.72], 4);
 
     // ΕΠΙΛΟΓΗ 1: Standard OpenStreetMap (Αυτή που ζήτησες)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
