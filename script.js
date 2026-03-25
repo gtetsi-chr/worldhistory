@@ -415,3 +415,17 @@ document.getElementById('send-ai-btn').addEventListener('click', callAI);
 document.getElementById('ai-input').addEventListener('keypress', function (e) {
     if (e.key === 'Enter') callAI();
 });
+
+// Στο τέλος του script.js
+const sendBtn = document.getElementById('send-ai-btn');
+const aiInput = document.getElementById('ai-input');
+
+if (sendBtn) {
+    sendBtn.addEventListener('click', callAI);
+}
+
+if (aiInput) {
+    aiInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') callAI();
+    });
+}
