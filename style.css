@@ -150,10 +150,36 @@ body {
 #image-container { min-height: 250px; display: flex; align-items: center; justify-content: center; background: #020617; border-radius: 12px; margin-top: 15px;}
 #entity-img { max-width: 100%; border-radius: 8px; }
 
-/* AI ZONE */
-.ai-zone { border: 1px solid var(--accent); margin-top: 20px; }
-#chat-box { height: 120px; overflow-y: auto; background: #020617; padding: 10px; margin-bottom: 10px; font-size: 0.85rem; }
-.chat-input-area { display: flex; gap: 10px; }
+* AI Zone - Βελτιωμένο Ύψος και Focus Effect */
+.ai-zone {
+    min-height: 350px; /* Αυξημένο αρχικό ύψος */
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+}
+/* Εφέ μεγέθυνσης όταν κάνουμε κλικ μέσα στην κάρτα */
+.ai-zone:focus-within {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border-color: var(--accent);
+}
+#chat-box {
+    flex: 1; /* Παίρνει όλο τον διαθέσιμο χώρο της κάρτας */
+    min-height: 220px; /* Μεγαλύτερο εσωτερικό box */
+    max-height: 400px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 6px;
+    padding: 10px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    border: 1px solid #334155;
+}
+.chat-input-area {
+    display: flex;
+    gap: 8px;
+}
 #ai-input { flex: 1; padding: 8px; border-radius: 4px; border: none; }
 #send-ai-btn { background: var(--accent); border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
 
