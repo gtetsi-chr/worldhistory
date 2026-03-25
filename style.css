@@ -159,8 +159,8 @@ body {
     margin-top: 25px !important; /* Πρόσθεσα !important για σιγουριά */
     display: flex;
     flex-direction: column;
-
-	transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease;
+	width: 100%;
+	transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
     will-change: width; /* Βοηθάει τον browser να κάνει ομαλό animation */
 }
 
@@ -175,7 +175,7 @@ body {
     width: 195%; /* Διπλασιάζει το πλάτος προς τα δεξιά */
     z-index: 999; /* Την φέρνει πάνω από τον χάρτη και τη Wikipedia */
 	outline: none;
-	box-shadow: 20px 0px 60px rgba(0,0,0,0.8); /* Σκιά για να φαίνεται το βάθος */
+	box-shadow: 25px 0px 50px rgba(0,0,0,0.7); /* Σκιά για να φαίνεται το βάθος */
 	position: relative; /* Για να δουλεύει το z-index */
 }
 /* Το εσωτερικό chat-box να μεγαλώνει αναλογικά */
@@ -196,10 +196,33 @@ body {
     gap: 10px;
     margin-top: auto; /* Σπρώχνει το input στο κάτω μέρος της κάρτας */
 	transition: width 0.3s ease;
+	background: transparent; /* Δεν χρειάζεται δικό του φόντο */
 }
-#ai-input { flex: 1; padding: 8px; border-radius: 4px; border: none; }
-#send-ai-btn { background: var(--accent); border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-
+#ai-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: white;
+}
+#ai-input:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+#send-ai-btn {
+    background: var(--accent);
+    color: #0f172a;
+    border: none;
+    padding: 0 20px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+#send-ai-btn:hover {
+    background: #7dd3fc;
+}
 /* --- RESPONSIVE DESIGN (Επαναφορά) --- */
 @media (max-width: 900px) {
     .grid-layout { grid-template-columns: 1fr; }
