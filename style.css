@@ -153,32 +153,43 @@ body {
 * AI Zone - Βελτιωμένο Ύψος και Focus Effect */
 .ai-zone {
     min-height: 450px; /* Αυξημένο ύψος που ζήτησες */
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+	transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
     position: relative; /* Για να δουλεύει το z-index */
     z-index: 10;
     width: 100%; /* Καταλαμβάνει τη στήλη της */
     background: var(--card-bg);
+	margin-top: 25px; /* Απόσταση από την επάνω κάρτα (Entity Card) */
 }
-/* Όταν το ai-input ή οποιοδήποτε στοιχείο μέσα πάρει focus */
+/* Ευθυγράμμιση με τη Βικιπαίδεια: 
+   Επειδή ο χάρτης είναι 400px, αν η Entity Card είναι μικρότερη, 
+   χρειαζόμαστε margin για να έρθει η AI Zone στο ίδιο ύψος με το image-container */
+.info-column {
+    display: flex;
+    flex-direction: column;
+}
+/* Όταν το chat πάρει focus */
 .ai-zone:focus-within {
-    width: 210%; /* Διπλασιάζει το πλάτος προς τα δεξιά */
+    width: 195%; /* Διπλασιάζει το πλάτος προς τα δεξιά */
     z-index: 999; /* Την φέρνει πάνω από τον χάρτη και τη Wikipedia */
-    box-shadow: 15px 15px 40px rgba(0,0,0,0.6);
+	outline: none;
+	box-shadow: 20px 0px 50px rgba(0,0,0,0.8); /* Σκιά για να φαίνεται το βάθος */
+	position: relative; /* Για να δουλεύει το z-index */
 }
 /* Το εσωτερικό chat-box να μεγαλώνει αναλογικά */
 #chat-box {
-    flex: 1; 
-    min-height: 300px; /* Περισσότερος χώρος για το κείμενο */
-    background: rgba(15, 23, 42, 0.4);
-    border-radius: 6px;
-    padding: 10px;
+    flex: 1;
+    min-height: 320px;
+    background: rgba(15, 23, 42, 0.6);
+    margin-bottom: 15px;
     overflow-y: auto;
-    margin-bottom: 10px;
     border: 1px solid #334155;
+    padding: 10px;
 }
+/* Διασφάλιση ότι το περιεχόμενο δεν θα "σπάει" κατά το μεγέθυνση */
 .chat-input-area {
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    margin-top: auto; /* Σπρώχνει το input στο κάτω μέρος της κάρτας */
 }
 #ai-input { flex: 1; padding: 8px; border-radius: 4px; border: none; }
 #send-ai-btn { background: var(--accent); border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
