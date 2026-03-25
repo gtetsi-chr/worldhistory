@@ -161,7 +161,7 @@ async function displayEntity(item) {
 	window.currentSelectedEntity = item; // Αποθήκευση του τρέχοντος αντικειμένου για την AI
 	
     // 1. Ενημέρωση Αριστερής Κάρτας (CSV Data)
-const cardContent = document.getElementById('card-content');
+	const cardContent = document.getElementById('card-content');
     
     // Λήψη εικόνας από Wikipedia (όπως στο tooltip)
     let wikiImg = ""; 
@@ -229,7 +229,6 @@ const cardContent = document.getElementById('card-content');
     html += `</div>`; // Κλείσιμο κεντρικού div
     cardContent.innerHTML = html;
     
-
     // 2. Wikipedia 
     const wikiIntro = document.getElementById('wiki-intro');
     const wikiFullContent = document.getElementById('wiki-full-content');
@@ -314,6 +313,23 @@ const cardContent = document.getElementById('card-content');
         marker.bindPopup(`<b>${item.Name}</b>`).openPopup();
         map.flyTo(coords, 6, { animate: true, duration: 1.5 });
     }
+
+	// 4. ΕΝΗΜΕΡΩΣΗ AI ZONE
+    const aiTitle = document.querySelector('.ai-zone h3');
+    const chatBox = document.getElementById('chat-box');
+
+    // Καθαρισμός της συνομιλίας όταν αλλάζει η οντότητα
+    chatBox.innerHTML = ''; 
+
+    // Δυναμικός Τίτλος: "Ρώτησε την [Name]" αν είναι πρόσωπο, αλλιώς "Ρώτησε την AI"
+    if (item.EntityType === 'Person') {
+        aiTitle.innerHTML = `🤖 Ρώτησε τον/την <span style="color:var(--accent);">${item.Name}</span>`;
+    } else {
+        aiTitle.innerHTML = `🤖 Ρώτησε την AI`;
+    }
+    // Κρατάμε το item global για να το βλέπει η callAI()
+    window.currentSelectedEntity = item;
+
 }
 
 // Λειτουργία Αναζήτησης μέσα στο Χρονολόγιο
