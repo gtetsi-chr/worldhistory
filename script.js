@@ -360,7 +360,7 @@ async function callAI() {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-        const WORKER_URL = "history.gtetsi.workers.dev"; // Π.χ. https://...workers.dev
+        const WORKER_URL = "https://history.gtetsi.workers.dev"; // Π.χ. https://...workers.dev
 
         const response = await fetch(WORKER_URL, {
             method: "POST",
