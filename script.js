@@ -1,36 +1,25 @@
-let map;
-let marker;
-window.historyData = [];
+// --- ΓΕΝΙΚΕΣ ΜΕΤΑΒΛΗΤΕΣ (Global Variables) ---
+let map; // Ο χάρτης Leaflet
+let marker; // Το σημάδι (καρφίτσα) πάνω στον χάρτη
+window.historyData = []; // Εδώ αποθηκεύονται όλα τα δεδομένα από το CSV
+window.currentSelectedEntity = null; // Η οντότητα που έχει επιλέξει ο χρήστης αυτή τη στιγμή
 
+// Περιμένουμε να φορτώσει η σελίδα πριν ξεκινήσουμε
 document.addEventListener('DOMContentLoaded', () => {
-    initMap();
-    loadCSV();
+    initMap(); // Δημιουργία χάρτη
+    loadCSV(); // Φόρτωση δεδομένων
+    setupEventListeners(); // Ενεργοποίηση κουμπιών (Search, AI κλπ)
 });
 
+// 1. Αρχικοποίηση του Χάρτη
 function initMap() {
     map = L.map('map', { scrollWheelZoom: false }).setView([37.98, 23.72], 4);
-
-    // ΕΠΙΛΟΓΗ 1: Standard OpenStreetMap (Αυτή που ζήτησες)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap'
     }).addTo(map);
-
-    /* --- ΑΛΛΕΣ ΕΠΙΛΟΓΕΣ (Βγάλε τα // για να τις ενεργοποιήσεις) --- */
-    
-    // ΕΠΙΛΟΓΗ 2: Ανάγλυφο (OpenTopoMap)
-    // L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png').addTo(map);
-    
-    // ΕΠΙΛΟΓΗ 3: Μοντέρνο γκρι (CartoDB Positron)
-    // L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png').addTo(map);
-    
-    // ΕΠΙΛΟΓΗ 4: Δορυφόρος (Esri World Imagery)
-    // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}').addTo(map);
-
-    // Επιλογή 5: CartoDB Dark (Για dark mode)
-    // L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);;
 }
 
-// 2. Φόρτωση και Ταξινόμηση Δεδομένων
+// 2. Φόρτωση και Ταξινόμηση Δεδομένων από το data.csv
 function loadCSV() {
     Papa.parse("data.csv", {
         download: true,
@@ -38,28 +27,26 @@ function loadCSV() {
         delimiter: ";",
         skipEmptyLines: true,
         complete: function(results) {
-            // Ταξινόμηση: Το "σήμερα" πάνω, το 5000 π.Χ. κάτω
+            // Ταξινομούμε τα δεδομένα: Τα πιο πρόσφατα έτη (π.χ. 2024) εμφανίζονται πρώτα
             window.historyData = results.data.sort((a, b) => {
                 return parseInt(b.Start_Year) - parseInt(a.Start_Year);
             });
-            console.log("Data Loaded & Sorted:", window.historyData.length);
+            console.log("Δεδομένα φορτώθηκαν:", window.historyData.length);
             generateTimeline(); 
         }
     });
 }
 
-// 3. Δημιουργία Timeline (Μόνο οι εγγραφές του CSV)
+// 3. Δημιουργία της λίστας στο αριστερό Timeline
 function generateTimeline() {
     const axis = document.getElementById('timeline-axis');
-    axis.innerHTML = ""; 
-
-    // Επιλογή του tooltip element
     const tooltip = document.getElementById('custom-tooltip');
+    axis.innerHTML = ""; 
 
     window.historyData.forEach((item, index) => {
         const div = document.createElement('div');
         
-        // Καθορισμός κλάσης χρώματος βάσει EntityType
+        // Απόδοση χρώματος ανάλογα με το είδος (Person, Empire κλπ)
         let typeClass = "";
         if (item.EntityType === "Person") typeClass = "marker-person";
         else if (item.EntityType === "Empire/State") typeClass = "marker-empire";
@@ -72,7 +59,6 @@ function generateTimeline() {
         const yearVal = parseInt(item.Start_Year);
         const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
 
-        // Προσθήκη του span class="dot" για το κυκλάκι
         div.innerHTML = `
             <span class="dot"></span>
             <div class="marker-info">
@@ -81,15 +67,12 @@ function generateTimeline() {
             </div>
         `;
 
-        // --- ΜΗΧΑΝΙΣΜΟΣ TOOLTIP ---
+        // Λειτουργία Tooltip (εμφάνιση περίληψης στο hover)
         let tooltipTimeout;
-
         div.addEventListener('mouseenter', (e) => {
-            // Εμφάνιση μετά από 0.5 δευτερόλεπτο hover
             tooltipTimeout = setTimeout(async () => {
                 let imgHtml = "";
-                
-                // Προσπάθεια λήψης εικόνας από Wikipedia για το tooltip
+                // Φέρνουμε μια μικρογραφία από την Wikipedia αν υπάρχει URL
                 if (item.Wiki_URL) {
                     const title = item.Wiki_URL.split('/').pop();
                     try {
@@ -101,12 +84,7 @@ function generateTimeline() {
                     } catch(err) {}
                 }
 
-                tooltip.innerHTML = `
-                    ${imgHtml}
-                    <strong style="color:var(--accent); display:block;">${item.Name}</strong>
-                    <small style="color:#94a3b8; line-height:1.2;">${item.BiographyShort.substring(0, 80)}...</small>
-                `;
-
+                tooltip.innerHTML = `${imgHtml}<strong>${item.Name}</strong><br><small>${item.BiographyShort.substring(0, 80)}...</small>`;
                 tooltip.style.display = 'block';
                 tooltip.style.top = (e.clientY + 15) + 'px';
                 tooltip.style.left = (e.clientX + 15) + 'px';
@@ -114,19 +92,12 @@ function generateTimeline() {
             }, 500);
         });
 
-        div.addEventListener('mousemove', (e) => {
-            // Το tooltip ακολουθεί το ποντίκι
-            tooltip.style.top = (e.clientY + 15) + 'px';
-            tooltip.style.left = (e.clientX + 15) + 'px';
-        });
-
         div.addEventListener('mouseleave', () => {
             clearTimeout(tooltipTimeout);
             tooltip.style.display = 'none';
-            tooltip.style.opacity = '0';
         });
-        // --- ΤΕΛΟΣ ΜΗΧΑΝΙΣΜΟΥ TOOLTIP ---
 
+        // Όταν κάνουμε κλικ, δείχνουμε όλες τις πληροφορίες στο κέντρο
         div.addEventListener('click', () => {
             document.querySelectorAll('.year-marker').forEach(el => el.classList.remove('active'));
             div.classList.add('active');
@@ -134,36 +105,17 @@ function generateTimeline() {
         });
 
         axis.appendChild(div);
-
-        if (index === 0) div.click(); 
+        if (index === 0) div.click(); // Επιλογή του πρώτου στοιχείου αυτόματα
     });
 }
 
-// Βοηθητική συνάρτηση για το χρώμα του Marker στον χάρτη
-function createCustomIcon(type) {
-    let color = "#3b82f6"; // Προεπιλογή: Μπλε (Person)
-    if (type === "Empire/State") color = "#f97316"; // Πορτοκαλί
-    else if (type === "Invention") color = "#10b981"; // Πράσινο
-    else if (type === "Event/War") color = "#8b5cf6"; // Μοβ
-    else if (type === "Movement/Culture") color = "#ec4899"; // Ροζ
-
-    return L.divIcon({
-        className: 'custom-map-marker',
-        html: `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.5);"></div>`,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7]
-    });
-}
-
-// 4. Προβολή Δεδομένων & Wikipedia Image
+// 4. Εμφάνιση των στοιχείων της επιλεγμένης οντότητας
 async function displayEntity(item) {
-    
-	window.currentSelectedEntity = item; // Αποθήκευση του τρέχοντος αντικειμένου για την AI
+	window.currentSelectedEntity = item; // Ενημέρωση της "παγκόσμιας" μεταβλητής για την AI
 	
-    // 1. Ενημέρωση Αριστερής Κάρτας (CSV Data)
-	const cardContent = document.getElementById('card-content');
+    const cardContent = document.getElementById('card-content');
     
-    // Λήψη εικόνας από Wikipedia (όπως στο tooltip)
+    // Προσπάθεια λήψης εικόνας
     let wikiImg = ""; 
     if (item.Wiki_URL) {
         const title = item.Wiki_URL.split('/').pop();
@@ -174,10 +126,9 @@ async function displayEntity(item) {
         } catch(e) {}
     }
 
-    // Βοηθητική συνάρτηση για να ελέγχουμε αν ένα πεδίο έχει έγκυρη τιμή
+    // Κατασκευή του HTML για την κεντρική κάρτα
     const hasValue = (val) => val && val !== "NULL" && val !== "";
 
-    // Χτίσιμο του HTML δυναμικά
     let html = `
         <div class="entity-card-v2">
             <div class="card-main-row">
@@ -185,207 +136,120 @@ async function displayEntity(item) {
                 <div class="entity-header-info">
                     ${hasValue(item.EraName) ? `<span class="era-badge-v2">${item.EraName}</span>` : ''}
                     <h2 class="entity-name-v2">${item.Name}</h2>
-                    <p class="entity-type-v2">${item.EntityType} 
-                        ${hasValue(item.Category_Lvl1) ? `• ${item.Category_Lvl1}` : ''}
-                        ${hasValue(item.Category_Lvl2) ? ` (${item.Category_Lvl2})` : ''}
-                    </p>
-                    <p class="entity-years-v2">
-                        ${item.Start_Year} ${parseInt(item.Start_Year) < 0 ? 'π.Χ.' : ''} 
-                        — 
-                        ${item.End_Year} ${parseInt(item.End_Year) < 0 ? 'π.Χ.' : ''}
-                    </p>
+                    <p class="entity-type-v2">${item.EntityType} • ${item.Category_Lvl1}</p>
+                    <p class="entity-years-v2">${item.Start_Year} — ${item.End_Year}</p>
                 </div>
             </div>
-
-            <div class="entity-bio-v2">
-                ${hasValue(item.BiographyShort) ? `<p>${item.BiographyShort}</p>` : ''}
-            </div>
+            <div class="entity-bio-v2"><p>${item.BiographyShort}</p></div>
     `;
 
-    // Ειδικά πεδία ΜΟΝΟ για Πρόσωπα (Person)
+    // Αν είναι πρόσωπο, δείξε επιπλέον στοιχεία (Ιδιότητα, Καταγωγή κλπ)
     if (item.EntityType === "Person") {
         html += `<div class="person-extra-info">`;
-        
         if (hasValue(item.CategoryName)) html += `<p><strong>Ιδιότητα:</strong> ${item.CategoryName}</p>`;
-        if (hasValue(item.Gender)) html += `<p><strong>Φύλο:</strong> ${item.Gender}</p>`;
-        if (hasValue(item.PlaceOfOrigin)) html += `<p><strong>Τόπος Καταγωγής:</strong> ${item.PlaceOfOrigin}</p>`;
-        if (hasValue(item.Start_Date)) html += `<p><strong>Ημ/νία Γέννησης:</strong> ${item.Start_Date}</p>`;
-        if (hasValue(item.End_Date)) html += `<p><strong>Ημ/νία Θανάτου:</strong> ${item.End_Date}</p>`;
-        if (hasValue(item.School_Tag)) html += `<p><strong>Σχολή/Ρεύμα:</strong> ${item.School_Tag}</p>`;
-        
+        if (hasValue(item.PlaceOfOrigin)) html += `<p><strong>Καταγωγή:</strong> ${item.PlaceOfOrigin}</p>`;
         html += `</div>`;
     }
 
-    // Συνεισφορά (για όλους αν υπάρχει)
     if (hasValue(item.KeyContribution)) {
-        html += `
-            <div class="contribution-v2">
-                <strong>Κύρια Συνεισφορά:</strong>
-                <p>${item.KeyContribution}</p>
-            </div>
-        `;
+        html += `<div class="contribution-v2"><strong>Συνεισφορά:</strong><p>${item.KeyContribution}</p></div>`;
     }
 
-    html += `</div>`; // Κλείσιμο κεντρικού div
+    html += `</div>`;
     cardContent.innerHTML = html;
     
-    // 2. Wikipedia 
+    // --- Ενημέρωση Wikipedia & Χάρτη ---
+    updateWikipediaSection(item);
+    updateMapMarker(item);
+
+	// Ενημέρωση τίτλου AI
+	const aiTitle = document.getElementById('ai-title');
+    if (aiTitle) {
+        aiTitle.innerHTML = item.EntityType === 'Person' 
+            ? `🤖 Ρώτησε τον <span style="color:var(--accent);">${item.Name}</span>` 
+            : `🤖 Ρώτησε την AI`;
+    }
+    document.getElementById('chat-box').innerHTML = ''; // Καθαρισμός προηγούμενου chat
+}
+
+// 5. Λειτουργία Wikipedia (Απομονωμένη για καθαρό κώδικα)
+async function updateWikipediaSection(item) {
     const wikiIntro = document.getElementById('wiki-intro');
     const wikiFullContent = document.getElementById('wiki-full-content');
     const showMoreBtn = document.getElementById('show-more-wiki');
     const topLink = document.getElementById('wiki-top-link');
-    
-    // ΠΛΗΡΗΣ ΕΠΑΝΑΦΟΡΑ: Καθαρίζουμε τα πάντα πριν τη νέα αναζήτηση
+
     wikiIntro.innerHTML = "Αναζήτηση στην Wikipedia...";
-    wikiIntro.style.display = "block"; // Επαναφορά εμφάνισης εισαγωγής
-    wikiFullContent.innerHTML = "";
     wikiFullContent.style.display = "none";
-    
-    showMoreBtn.innerText = "Δείξε περισσότερα"; // Επαναφορά κειμένου κουμπιού
     showMoreBtn.style.display = "none";
 
     if (item.Wiki_URL) {
-        const urlParts = item.Wiki_URL.split('/');
-        const wikiTitle = urlParts[urlParts.length - 1];
-        
-        if (topLink) {
-            topLink.href = `https://el.wikipedia.org/wiki/${wikiTitle}`;
-            topLink.style.display = "block";
-        }
+        const wikiTitle = item.Wiki_URL.split('/').pop();
+        topLink.href = `https://el.wikipedia.org/wiki/${wikiTitle}`;
+        topLink.style.display = "block";
 
         try {
-			// Φέρνουμε πρώτα την εισαγωγή (Section 0)
             const url = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&section=0`;
             const response = await fetch(url);
             const data = await response.json();
 
-            if (data.parse && data.parse.text) {
-                let cleanHtml = data.parse.text["*"];
-                cleanHtml = cleanHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
-                
-				// Χρήση της εικόνας που ήδη βρήκαμε για το tooltip (αν υπάρχει) ή από το CSV
-                let imgHtml = "";
-                if (item.Image_Path) {
-                    imgHtml = `<img src="${item.Image_Path}" class="wiki-main-img" style="float:right; margin:10px; max-width:120px;" onerror="this.style.display='none'">`;
-                }
-
-                wikiIntro.innerHTML = `<div class="wiki-content">${imgHtml}${cleanHtml}</div>`;
+            if (data.parse) {
+                wikiIntro.innerHTML = `<div class="wiki-content">${data.parse.text["*"]}</div>`;
                 showMoreBtn.style.display = "block";
-
-                // Λειτουργία κουμπιού "Δείξε περισσότερα"
                 showMoreBtn.onclick = async () => {
-                    showMoreBtn.innerText = "Φόρτωση...";
-                    try {
-						// Φέρνουμε ΟΛΟ το κείμενο εκτός από το section 0 που ήδη έχουμε
-                        const fullUrl = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text&mobileformat=1`;
-                        const fullRes = await fetch(fullUrl);
-                        const fullData = await fullRes.json();
-                        
-                        let fullHtml = fullData.parse.text["*"];
-                        fullHtml = fullHtml.replace(/href="\/wiki\//g, 'target="_blank" href="https://el.wikipedia.org/wiki/');
-                        
-                        // Απόκρυψη εισαγωγής και εμφάνιση πλήρους κειμένου
-                        wikiIntro.style.display = "none";
-                        wikiFullContent.innerHTML = `<div class="wiki-content">${fullHtml}</div>`;
-                        wikiFullContent.style.display = "block";
-                        showMoreBtn.style.display = "none";
-                    } catch (err) {
-                        showMoreBtn.innerText = "Σφάλμα φόρτωσης";
-                        console.error("Wiki Full Load Error:", err);
-                    }
+                    const fullUrl = `https://el.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(wikiTitle)}&format=json&origin=*&prop=text`;
+                    const fullRes = await fetch(fullUrl);
+                    const fullData = await fullRes.json();
+                    wikiIntro.style.display = "none";
+                    wikiFullContent.innerHTML = `<div class="wiki-content">${fullData.parse.text["*"]}</div>`;
+                    wikiFullContent.style.display = "block";
+                    showMoreBtn.style.display = "none";
                 };
-
-				// Scroll στην κορυφή
-                document.getElementById('image-container').scrollTop = 0;
-            } else {
-                wikiIntro.innerHTML = "Δεν βρέθηκε λήμμα στη Βικιπαίδεια.";
             }
-        } catch (err) {
-            wikiIntro.innerHTML = "Σφάλμα σύνδεσης με τη Βικιπαίδεια.";
-        }
+        } catch (err) { wikiIntro.innerHTML = "Δεν βρέθηκε λήμμα."; }
     }
+}
 
-    // 3. Χάρτης
+// 6. Ενημέρωση Χάρτη
+function updateMapMarker(item) {
     if (item.Coordinate_Point) {
         const coords = item.Coordinate_Point.split(',').map(Number);
         if (marker) map.removeLayer(marker);
         marker = L.marker(coords, { icon: createCustomIcon(item.EntityType) }).addTo(map);
-        marker.bindPopup(`<b>${item.Name}</b>`).openPopup();
         map.flyTo(coords, 6, { animate: true, duration: 1.5 });
     }
-
-	// 4. ΕΝΗΜΕΡΩΣΗ AI ZONE
-	// Επιλέγουμε τον τίτλο και το chat box
-	const aiTitle = document.getElementById('ai-title');
-    const chatBox = document.getElementById('chat-box');
-
-    // Καθαρισμός της συνομιλίας όταν αλλάζει η οντότητα
-    if (chatBox) chatBox.innerHTML = '';
-
-    // Δυναμικός Τίτλος: "Ρώτησε την [Name]" αν είναι πρόσωπο, αλλιώς "Ρώτησε την AI"
-	if (aiTitle) {
-        if (item.EntityType === 'Person') {
-            aiTitle.innerHTML = `🤖 Ρώτησε τον <span style="color:var(--accent);">${item.Name}</span>`;
-        } else {
-            aiTitle.innerHTML = `🤖 Ρώτησε την AI`;
-        }
-    }
-    // Κρατάμε το item global για να το βλέπει η callAI()
-    window.currentSelectedEntity = item;
-
 }
 
-// Λειτουργία Αναζήτησης μέσα στο Χρονολόγιο
-document.getElementById('timelineSearch').addEventListener('input', function(e) {
-    const term = e.target.value.toLowerCase(); // Τι έγραψε ο χρήστης
-    const markers = document.querySelectorAll('.year-marker');
-
-    markers.forEach(marker => {
-        const name = marker.querySelector('.entity-name-preview').innerText.toLowerCase();
-        const year = marker.querySelector('.year-number').innerText.toLowerCase();
-        
-        // Αν το όνομα ή η χρονιά περιλαμβάνουν αυτό που γράψαμε
-        if (name.includes(term) || year.includes(term)) {
-            marker.classList.remove('hidden'); // Δείξε το
-        } else {
-            marker.classList.add('hidden'); // Κρύψτο
-        }
+// 7. Βοηθητική συνάρτηση για το εικονίδιο του χάρτη
+function createCustomIcon(type) {
+    let color = "#3b82f6";
+    if (type === "Empire/State") color = "#f97316";
+    else if (type === "Invention") color = "#10b981";
+    return L.divIcon({
+        className: 'custom-map-marker',
+        html: `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white;"></div>`,
+        iconSize: [14, 14],
+        iconAnchor: [7, 7]
     });
-});
+}
 
-// --- ΛΕΙΤΟΥΡΓΙΑ AI CHATBOX ---
-
-// Μεταβλητή για να ξέρουμε ποιο entity είναι επιλεγμένο αυτή τη στιγμή
-let currentSelectedEntity = null;// Ενημέρωση της currentSelectedEntity όταν επιλέγεται κάτι (θα το βάλουμε μέσα στην displayEntity αργότερα)
-
-// --- ΛΕΙΤΟΥΡΓΙΑ ΣΥΝΟΜΙΛΙΑΣ ΜΕ AI (CLOUDFLARE WORKER) ---
-	async function callAI() {
+// 8. Λειτουργία AI
+async function callAI() {
     const inputField = document.getElementById('ai-input');
     const chatBox = document.getElementById('chat-box');
     const question = inputField.value.trim();
 
-    if (!question) return;
-    
-    // Έλεγχος αν έχει επιλεγεί κάτι
-    if (!window.currentSelectedEntity) {
-        chatBox.innerHTML += `<p style="color:orange;">⚠️ Παρακαλώ επιλέξτε πρώτα κάτι από το χρονολόγιο.</p>`;
-        return;
-    }
+    if (!question || !window.currentSelectedEntity) return;
 
-    // Εμφάνιση ερώτησης
     chatBox.innerHTML += `<p><strong>Εσείς:</strong> ${question}</p>`;
     inputField.value = ""; 
     
-    // Animation "Σκέφτεται..."
     const loadingId = "loading-" + Date.now();
     chatBox.innerHTML += `<p id="${loadingId}" style="color:var(--accent);">🤖 Σκέφτομαι...</p>`;
     chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-        // Εδώ βάζεις το URL που πήρες από το Cloudflare
-        const WORKER_URL = "https://history.gtetsi.workers.dev/"; 
-
-        const response = await fetch(WORKER_URL, {
+        const response = await fetch("https://history.gtetsi.workers.dev/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -394,38 +258,30 @@ let currentSelectedEntity = null;// Ενημέρωση της currentSelectedEnt
                 context: window.currentSelectedEntity.BiographyShort + " " + window.currentSelectedEntity.KeyContribution
             })
         });
-
         const data = await response.json();
-        
-        // Αφαίρεση του loading και εμφάνιση απάντησης
-        const loadingElem = document.getElementById(loadingId);
-        if (loadingElem) loadingElem.remove();
-        
+        document.getElementById(loadingId).remove();
         chatBox.innerHTML += `<p><strong>🤖 AI:</strong> ${data.text}</p>`;
         chatBox.scrollTop = chatBox.scrollHeight;
-
     } catch (err) {
-        const loadingElem = document.getElementById(loadingId);
-        if (loadingElem) loadingElem.innerText = "❌ Σφάλμα σύνδεσης με την AI.";
+        document.getElementById(loadingId).innerText = "❌ Σφάλμα σύνδεσης.";
     }
 }
 
-// Listeners για το κουμπί και το πλήκτρο Enter
-document.getElementById('send-ai-btn').addEventListener('click', callAI);
-document.getElementById('ai-input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') callAI();
-});
+// 9. Συγκεντρωτικοί Listeners για τα κουμπιά
+function setupEventListeners() {
+    // Αναζήτηση στο Timeline
+    document.getElementById('timelineSearch').addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        document.querySelectorAll('.year-marker').forEach(marker => {
+            const name = marker.querySelector('.entity-name-preview').innerText.toLowerCase();
+            const year = marker.querySelector('.year-number').innerText.toLowerCase();
+            marker.classList.toggle('hidden', !name.includes(term) && !year.includes(term));
+        });
+    });
 
-// Στο τέλος του script.js
-const sendBtn = document.getElementById('send-ai-btn');
-const aiInput = document.getElementById('ai-input');
-
-if (sendBtn) {
-    sendBtn.addEventListener('click', callAI);
-}
-
-if (aiInput) {
-    aiInput.addEventListener('keypress', (e) => {
+    // AI Κουμπί και Enter
+    document.getElementById('send-ai-btn').addEventListener('click', callAI);
+    document.getElementById('ai-input').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') callAI();
     });
 }
