@@ -315,17 +315,20 @@ async function displayEntity(item) {
     }
 
 	// 4. ΕΝΗΜΕΡΩΣΗ AI ZONE
-    const aiTitle = document.querySelector('.ai-zone h3');
+	// Επιλέγουμε τον τίτλο και το chat box
+	const aiTitle = document.getElementById('ai-title');
     const chatBox = document.getElementById('chat-box');
 
     // Καθαρισμός της συνομιλίας όταν αλλάζει η οντότητα
-    chatBox.innerHTML = ''; 
+    if (chatBox) chatBox.innerHTML = '';
 
     // Δυναμικός Τίτλος: "Ρώτησε την [Name]" αν είναι πρόσωπο, αλλιώς "Ρώτησε την AI"
-    if (item.EntityType === 'Person') {
-        aiTitle.innerHTML = `🤖 Ρώτησε τον/την <span style="color:var(--accent);">${item.Name}</span>`;
-    } else {
-        aiTitle.innerHTML = `🤖 Ρώτησε την AI`;
+	if (aiTitle) {
+        if (item.EntityType === 'Person') {
+            aiTitle.innerHTML = `🤖 Ρώτησε τον/την <span style="color:var(--accent);">${item.Name}</span>`;
+        } else {
+            aiTitle.innerHTML = `🤖 Ρώτησε την AI`;
+        }
     }
     // Κρατάμε το item global για να το βλέπει η callAI()
     window.currentSelectedEntity = item;
