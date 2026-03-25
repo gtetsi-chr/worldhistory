@@ -325,7 +325,7 @@ async function displayEntity(item) {
     // Δυναμικός Τίτλος: "Ρώτησε την [Name]" αν είναι πρόσωπο, αλλιώς "Ρώτησε την AI"
 	if (aiTitle) {
         if (item.EntityType === 'Person') {
-            aiTitle.innerHTML = `🤖 Ρώτησε τον/την <span style="color:var(--accent);">${item.Name}</span>`;
+            aiTitle.innerHTML = `🤖 Ρώτησε τον <span style="color:var(--accent);">${item.Name}</span>`;
         } else {
             aiTitle.innerHTML = `🤖 Ρώτησε την AI`;
         }
