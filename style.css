@@ -152,15 +152,17 @@ body {
 
 /* AI Zone - Βελτιωμένο Ύψος και Focus Effect */
 .ai-zone {
-    min-height: 450px; 
-    position: relative; 
-    z-index: 10;
-    background: var(--card-bg);
-    margin-top: 25px !important; /* Πρόσθεσα !important για σιγουριά */
-    display: flex;
+	display: flex;
     flex-direction: column;
-	transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
-    will-change: width; /* Βοηθάει τον browser να κάνει ομαλό animation */
+    position: relative;
+    z-index: 10;
+    margin-top: 30px !important;
+    min-height: 450px;
+    background: var(--card-bg);
+    max-width: 100%; /* Επιβάλλουμε αρχικό όριο */
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Πιο αργό και ομαλό */
+    overflow: hidden; /* Βοηθάει στο να μην "πηδάει" το περιεχόμενο */
+	will-change: width; /* Βοηθάει τον browser να κάνει ομαλό animation */
 }
 
 /* Προσθήκη για να μην κολλάνε οι κάρτες στην αριστερή στήλη */
@@ -172,6 +174,9 @@ body {
 /* Όταν το chat πάρει focus */
 .ai-zone:focus-within {
     width: 195%; /* Διπλασιάζει το πλάτος προς τα δεξιά */
+	/* Χρησιμοποιούμε min-width και max-width για να αναγκάσουμε το transition */
+    min-width: 200%; 
+    max-width: 200%;
     z-index: 999; /* Την φέρνει πάνω από τον χάρτη και τη Wikipedia */
 	outline: none;
 	box-shadow: 25px 0px 50px rgba(0,0,0,0.7); /* Σκιά για να φαίνεται το βάθος */
