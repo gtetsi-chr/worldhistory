@@ -300,9 +300,54 @@ function setupEventListeners() {
         });
     });
 
+document.getElementById('timelineSearch').addEventListener('input', applyFilters);
+
+    // Κουμπιά Φίλτρων
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Αν πατηθεί το ήδη ενεργό, το απενεργοποιούμε
+            if (btn.classList.contains('active')) {
+                btn.classList.remove('active');
+            } else {
+                // Απενεργοποιούμε όλα τα άλλα και ενεργοποιούμε αυτό
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+            applyFilters(); // Εφαρμογή φίλτρου
+        });
+    });
+	
     // AI Κουμπί και Enter
     document.getElementById('send-ai-btn').addEventListener('click', callAI);
     document.getElementById('ai-input').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') callAI();
+    });
+}
+
+// 10. Λειτουργία Φιλτραρίσματος (EntityType)
+function applyFilters() {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const searchTerm = document.getElementById('timelineSearch').value.toLowerCase();
+    const selectedType = activeBtn ? activeBtn.getAttribute('data-type') : null;
+
+    document.querySelectorAll('.year-marker').forEach(marker => {
+        // Παίρνουμε τα δεδομένα από το marker (χρησιμοποιώντας το όνομα και το έτος που ήδη έχεις)
+        const name = marker.querySelector('.entity-name-preview').innerText.toLowerCase();
+        const year = marker.querySelector('.year-number').innerText.toLowerCase();
+        
+        // Έλεγχος αν ταιριάζει με το κείμενο αναζήτησης
+        const matchesSearch = name.includes(searchTerm) || year.includes(searchTerm);
+        
+        // Έλεγχος αν ταιριάζει με τον τύπο (π.χ. Person)
+        // Επειδή στο CSS βάζεις class "marker-person", ελέγχουμε αν η class περιέχει τον τύπο
+        const markerClass = marker.className.toLowerCase();
+        const matchesType = !selectedType || markerClass.includes(selectedType.toLowerCase().split('/')[0]);
+
+        // Εμφάνιση ή απόκρυψη
+        if (matchesSearch && matchesType) {
+            marker.classList.remove('hidden');
+        } else {
+            marker.classList.add('hidden');
+        }
     });
 }
