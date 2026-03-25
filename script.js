@@ -383,7 +383,7 @@ let currentSelectedEntity = null;// Ενημέρωση της currentSelectedEnt
 
     try {
         // Εδώ βάζεις το URL που πήρες από το Cloudflare
-        const WORKER_URL = "ΤΟ_URL_ΣΟΥ_ΕΔΩ"; 
+        const WORKER_URL = "https://history-ai-worker.onoma.workers.dev"; 
 
         const response = await fetch(WORKER_URL, {
             method: "POST",
