@@ -153,7 +153,7 @@ body {
 * AI Zone - Βελτιωμένο Ύψος και Focus Effect */
 .ai-zone {
     min-height: 450px; /* Αυξημένο ύψος που ζήτησες */
-	transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+	transition: width 0.3s ease;
     position: relative; /* Για να δουλεύει το z-index */
     z-index: 10;
     width: 100%; /* Καταλαμβάνει τη στήλη της */
@@ -190,6 +190,7 @@ body {
     display: flex;
     gap: 10px;
     margin-top: auto; /* Σπρώχνει το input στο κάτω μέρος της κάρτας */
+	transition: width 0.3s ease;
 }
 #ai-input { flex: 1; padding: 8px; border-radius: 4px; border: none; }
 #send-ai-btn { background: var(--accent); border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
