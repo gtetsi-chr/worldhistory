@@ -49,7 +49,7 @@ body {
 
 /* Header & Search */
 .sidebar-header {
-    padding: 20px 15px;
+    padding: 10px 15px;
     background: #020617;
     z-index: 1000;
     overflow: visible; 
@@ -154,7 +154,7 @@ body {
 .filter-container {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
+    padding-top: 10px;
     gap: 5px;
 }
 
