@@ -568,28 +568,35 @@ body {
 }
 
 .slider-wrapper {
-    position: relative; /* Για να μπει το νούμερο από πάνω */
+    position: relative;
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: center; /* Κεντράρει το περιεχόμενο */
 }
 
 /* Το ίδιο το slider */
 #zoomSlider {
     width: 100%;
-    height: 10px; /* Το ύψος που ζήτησες */
+    height: 14px; /* Το κάναμε λίγο πιο παχύ για να χωράει το νούμερο */
     accent-color: var(--accent);
     cursor: pointer;
+    background: #1e293b;
+    border-radius: 10px;
+    appearance: none; /* Αφαιρεί το προεπιλεγμένο στυλ των Windows/Mac */
 }
 
 #zoomValue {
     position: absolute;
-    top: -18px; /* Το βάζει ακριβώς πάνω από το slider */
+    /* Τώρα το νούμερο κάθεται ακριβώς στο κέντρο της μπάρας */
     left: 50%;
     transform: translateX(-50%);
-    font-size: 10px;
-    color: var(--text-dim);
-    pointer-events: none; /* Να μην εμποδίζει το κλικ */
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    pointer-events: none; /* Για να μπορείς να πατάς το slider "μέσα" από το νούμερο */
+    z-index: 2; /* Το φέρνει μπροστά από την μπάρα */
+    text-shadow: 0px 0px 4px rgba(0,0,0,0.8); /* Σκιά για να διαβάζεται εύκολα */
 }
 
 
