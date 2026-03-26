@@ -617,13 +617,6 @@ body {
 }
 
 
-
-.zoom-label {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    margin-top: 5px;
-}
-
 /* Η "μαγεία": Ορίζουμε μια μεταβλητή για το κενό ανάμεσα στα γεγονότα */
 
 .timeline-wrapper {
