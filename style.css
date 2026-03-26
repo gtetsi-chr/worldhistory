@@ -87,11 +87,24 @@ body {
 /* Scroll Container & Vertical Line */
 .timeline-scroll-container {
     flex: 1; 
-    overflow-y: auto; 
+    overflow-y: auto !important;
     overflow-x: hidden; 
-    scrollbar-width: none;
+    /* ΕΔΩ ΔΙΑΓΡΑΨΑΜΕ ΤΟ scrollbar-width: none; */
 }
-.timeline-scroll-container::-webkit-scrollbar { display: none; }
+   /*.timeline-scroll-container::-webkit-scrollbar { display: none; }*/
+/* 2. Μαύρη Μπάρα Κύλισης για το Timeline */
+.timeline-scroll-container::-webkit-scrollbar {width: 10px !important;}
+
+.timeline-scroll-container::-webkit-scrollbar-track {background: #0f172a;}
+
+.timeline-scroll-container::-webkit-scrollbar-thumb {
+    background: #334155; /* Σκούρο γκρι/μαύρο */
+    border-radius: 10px;
+}
+
+.timeline-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--accent); /* Να φέγγει ελαφρώς στο hover */
+}
 
 .timeline-wrapper {
     position: relative;
@@ -595,37 +608,12 @@ body {
     font-weight: bold;
     color: white;
     pointer-events: none; /* Για να μπορείς να πατάς το slider "μέσα" από το νούμερο */
-    z-index: 2; /* Το φέρνει μπροστά από την μπάρα */
+    z-index: 10; /* Το φέρνει μπροστά από την μπάρα */
     text-shadow: 0px 0px 4px rgba(0,0,0,0.8); /* Σκιά για να διαβάζεται εύκολα */
 }
 
 
-/* 2. Μαύρη Μπάρα Κύλισης για το Timeline */
-.timeline-scroll-container::-webkit-scrollbar {
-    width: 6px;
-}
-
-.timeline-scroll-container::-webkit-scrollbar-track {
-    background: #0f172a; 
-}
-
-.timeline-scroll-container::-webkit-scrollbar-thumb {
-    background: #334155; /* Σκούρο γκρι/μαύρο */
-    border-radius: 10px;
-}
-
-.timeline-scroll-container::-webkit-scrollbar-thumb:hover {
-    background: var(--accent); /* Να φέγγει ελαφρώς στο hover */
-}
-
-/* Εξασφαλίζουμε ότι η μπάρα είναι ορατή */
-.timeline-scroll-container {
-    overflow-y: auto !important;
-}
-
-
 /* Η "μαγεία": Ορίζουμε μια μεταβλητή για το κενό ανάμεσα στα γεγονότα */
-
 .timeline-wrapper {
     --zoom-gap: 50px; /* Αυτό θα αλλάζει από το JavaScript */
     transition: all 0.3s ease; /* Για να γίνεται ομαλά το τέντωμα */
