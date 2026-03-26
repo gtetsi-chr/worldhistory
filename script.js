@@ -375,18 +375,24 @@ function applyFilters() {
 
 // 11. Λειτουργία Zoom & Rank Filtering
 function updateZoomAndRank() {
-    const detailLevel = parseInt(document.getElementById('zoomSlider').value);
-    document.getElementById('zoomValue').innerText = detailLevel;
+    const zoomLevel = parseInt(document.getElementById('zoomSlider').value);
+    document.getElementById('zoomValue').innerText = zoomLevel;
 
-    // Φιλτράρισμα βάσει Rank
+    // 1. Μικρό τέντωμα (πιο διακριτικό από πριν)
+    // Level 1 = 10px κενό, Level 10 = 100px κενό
+    const newGap = zoomLevel * 10; 
+    document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
+
+    // 2. Ημιδιαφάνεια βάσει Rank (αυτό που σου άρεσε!)
     document.querySelectorAll('.year-marker').forEach(marker => {
         const entityRank = parseInt(marker.getAttribute('data-rank')) || 10;
         
-        // Αν το Rank του γεγονότος είναι μικρότερο ή ίσο με το Slider, το δείχνουμε
-        if (entityRank <= detailLevel) {
-            marker.classList.remove('rank-hidden');
+        if (entityRank <= zoomLevel) {
+            marker.style.opacity = "1";
+            marker.style.pointerEvents = "all";
         } else {
-            marker.classList.add('rank-hidden');
+            marker.style.opacity = "0.15"; // Πολύ αχνό αλλά ορατό
+            marker.style.pointerEvents = "none";
         }
     });
 }
