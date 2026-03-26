@@ -330,6 +330,20 @@ document.getElementById('timelineSearch').addEventListener('input', applyFilters
 
 	// Listener για το Slider
 	document.getElementById('zoomSlider').addEventListener('input', updateZoomAndRank);
+
+	// Λειτουργία για το κουμπί Μείον (-)
+	document.getElementById('zoomOut').addEventListener('click', () => {
+	    const slider = document.getElementById('zoomSlider');
+	    slider.value = parseInt(slider.value) - 1;
+	    updateZoomAndRank(); // Καλούμε τη συνάρτηση για να ανανεωθεί το timeline
+	});
+	
+	// Λειτουργία για το κουμπί Συν (+)
+	document.getElementById('zoomIn').addEventListener('click', () => {
+	    const slider = document.getElementById('zoomSlider');
+	    slider.value = parseInt(slider.value) + 1;
+	    updateZoomAndRank(); // Καλούμε τη συνάρτηση για να ανανεωθεί το timeline
+	});
 }
 
 // 10. Λειτουργία Φιλτραρίσματος (EntityType)
