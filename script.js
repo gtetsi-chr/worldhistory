@@ -380,7 +380,7 @@ function updateZoomAndRank() {
 
     // 1. Αλλαγή απόστασης (Οπτικό Zoom)
     // Υπολογίζουμε το κενό: π.χ. Level 1 = 30px, Level 10 = 300px
-    const newGap = zoomLevel * 35; 
+    const newGap = zoomLevel * 15; 
     document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
 
     // 2. Φιλτράρισμα βάσει Rank
