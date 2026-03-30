@@ -539,17 +539,43 @@ body {
 
 /* Το πλαίσιο του slider στο κάτω μέρος του sidebar */
 .zoom-controls {
-    padding: 15px;
-    background: #1e293b; /* Ίδιο χρώμα με την κάρτα */
+    padding: 5px 10px;
+    background: #0f172a; /* Πιο σκούρο, σαν το background */
     border-top: 1px solid #334155;
-    text-align: center;
+    height: 40px; /* Συνολικό ύψος περιοχής */
+    display: flex;
+    align-items: center;
+}
+
+.zoom-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+}
+
+.zoom-row button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px;
+}
+
+.slider-wrapper {
+    position: relative; /* Για να μπει το νούμερο από πάνω */
+    flex: 1;
+    display: flex;
+    align-items: center;
 }
 
 /* Το ίδιο το slider */
 #zoomSlider {
-    width: 70%;
+   width: 100%;
+    height: 10px; /* Το ύψος που ζήτησες */
+    accent-color: var(--accent);
     cursor: pointer;
-    accent-color: var(--accent); /* Θα πάρει το γαλάζιο χρώμα σου */
 }
 
 .zoom-label {
@@ -558,7 +584,39 @@ body {
     margin-top: 5px;
 }
 
-/* Η "μαγεία": Ορίζουμε μια μεταβλητή για το κενό ανάμεσα στα γεγονότα */
+#zoomValue {
+    position: absolute;
+    top: -18px; /* Το βάζει ακριβώς πάνω από το slider */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--text-dim);
+    pointer-events: none; /* Να μην εμποδίζει το κλικ */
+}
+
+/* 2. Μαύρη Μπάρα Κύλισης για το Timeline */
+.timeline-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.timeline-scroll-container::-webkit-scrollbar-track {
+    background: #0f172a; 
+}
+
+.timeline-scroll-container::-webkit-scrollbar-thumb {
+    background: #334155; /* Σκούρο γκρι/μαύρο */
+    border-radius: 10px;
+}
+
+.timeline-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--accent); /* Να φέγγει ελαφρώς στο hover */
+}
+
+/* Εξασφαλίζουμε ότι η μπάρα είναι ορατή */
+.timeline-scroll-container {
+    overflow-y: auto !important;
+}
+
 .timeline-wrapper {
     --zoom-gap: 50px; /* Αυτό θα αλλάζει από το JavaScript */
     transition: all 0.3s ease; /* Για να γίνεται ομαλά το τέντωμα */
