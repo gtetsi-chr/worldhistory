@@ -378,18 +378,21 @@ function updateZoomAndRank() {
     const zoomLevel = parseInt(document.getElementById('zoomSlider').value);
     document.getElementById('zoomValue').innerText = zoomLevel;
 
-    // 1. Τέντωμα (Zoom)
-    const newGap = zoomLevel * 3; 
+    // 1. Τέντωμα απόστασης
+    const newGap = zoomLevel * 15; 
     document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
 
-    // 2. Συμπίεση Ασήμαντων
+    // 2. Εφέ Συρρίκνωσης και Διαφάνειας
     document.querySelectorAll('.year-marker').forEach(marker => {
         const entityRank = parseInt(marker.getAttribute('data-rank')) || 10;
         
         if (entityRank <= zoomLevel) {
-            marker.classList.remove('is-dimmed');
+            // Σημαντικό γεγονός: Μεγάλο και ορατό
+            marker.classList.remove('low-detail');
+            marker.style.maxHeight = "100px"; // Επαναφορά ύψους (άνετο όριο)
         } else {
-            marker.classList.add('is-dimmed');
+            // Ασήμαντο γεγονός: Μικραίνει και "σβήνει"
+            marker.classList.add('low-detail');
         }
     });
 }
