@@ -126,17 +126,24 @@ body {
    
    /* "κρύβεται" το περιεχόμενο στο μηδενικό ύψος */
     margin-bottom: var(--zoom-gap) !important;
-    transition: all 0.3s ease; /* transition σε "all" για να πιάνει και το ύψος */
-    overflow: hidden; /* Απαραίτητο για να "κρύβεται" το περιεχόμενο στο μηδενικό ύψος */
+    transition: all 0.8s ease-in-out; /* Αργό και ομαλό transition */
+    overflow: hidden; /* Απαραίτητο για το εφέ ύψους */
 }
 /* Όταν ένα γεγονός είναι "ασήμαντο" βάσει του slider */
-.year-marker.is-dimmed {
+/* Όταν ένα marker είναι "ασήμαντο" (βάσει Rank στο JS) */
+.year-marker.low-detail {
     opacity: 0.15;
-    height: 0;        /* Μηδενίζει το ύψος */
-    padding-top: 0;    /* Αφαιρεί τα κενά */
-    padding-bottom: 0;
-    margin-bottom: 0 !important; /* Ακυρώνει το zoom-gap */
+    transform: scale(0.9);
+    max-height: 20px; /* Πολύ μικρό ύψος */
     pointer-events: none;
+}
+
+.year-marker.low-detail .year-number {
+    font-size: 0.6rem; /* Μικρά γράμματα */
+}
+
+.year-marker.low-detail .entity-name-preview {
+    font-size: 0.5rem; /* Σχεδόν αόρατα γράμματα */
 }
 
 .dot {
