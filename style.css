@@ -115,32 +115,27 @@ body {
 
 /* Timeline Markers (Στοιχεία λίστας) */
 .year-marker {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 15px 10px;
-    cursor: pointer;
-    z-index: 2; 
-    transition: 0.3s;
+    margin-bottom: var(--zoom-gap) !important;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Αργό και ομαλό transition */
+    overflow: hidden; /* Για να μην πετάγονται τα γράμματα όταν μικραίνει */
+    opacity: 1;
 }
 
-/* Στυλ για τα "ασήμαντα" (ημιδιάφανα) γεγονότα */
-.year-marker.is-dimmed {
+/* Αυτό θα το ελέγχει το JS για τα ασήμαντα */
+.is-insignificant {
     opacity: 0.15;
-    transform: scale(0.85); /* Ελαφρώς μικρότερα */
-    margin-bottom: 5px !important; /* Πολύ μικρή απόσταση */
-    pointer-events: none;
-    transition: all 1.2s ease; /* Αργό transition όπως ζήτησες */
+    transform: scale(0.8); /* Μικραίνει λίγο το μέγεθος */
+    font-size: 0.5rem !important; /* Πολύ μικρά γράμματα */
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 2px !important; /* Πολύ μικρή απόσταση */
 }
 
-.year-marker.is-dimmed .year-number {
-    font-size: 0.7rem; /* Μικρά γράμματα χρονολογίας */
+.is-insignificant .dot {
+    transform: scale(0.5); /* Μικραίνει η κουκκίδα */
 }
 
-.year-marker.is-dimmed .entity-name-preview {
-    font-size: 0.6rem; /* Μικρά γράμματα ονόματος */
-}
+
 
 /* Κανονικά γεγονότα */
 .year-marker {
