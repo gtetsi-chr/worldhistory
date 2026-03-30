@@ -86,12 +86,17 @@ body {
 
 /* Scroll Container & Vertical Line */
 .timeline-scroll-container {
-    flex: 1; 
-    overflow-y: auto; 
-    overflow-x: hidden; 
-    scrollbar-width: none;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    padding-right: 5px; /* Χώρος για την μπάρα */
 }
-.timeline-scroll-container::-webkit-scrollbar { display: none; }
+/* Μαύρη μπάρα κύλισης */
+.timeline-scroll-container::-webkit-scrollbar {
+    width: 8px !important;
+    display: block !important;
+}
 
 .timeline-wrapper {
     position: relative;
@@ -420,7 +425,9 @@ body {
 .card-main-row { display: flex; gap: 15px; margin-bottom: 15px; }
 
 .entity-img-v2 {
-    width: 100px;
+    /*width: 100px;*/
+    max-width: 150px;
+    width: auto;
     height: 130px;
     object-fit: cover;
     border-radius: 6px;
@@ -591,31 +598,24 @@ body {
     font-weight: bold;
     color: white;
     pointer-events: none; /* Για να μπορείς να πατάς το slider "μέσα" από το νούμερο */
-    z-index: 2; /* Το φέρνει μπροστά από την μπάρα */
+    z-index: 10; /* Το φέρνει μπροστά από την μπάρα */
     text-shadow: 0px 0px 4px rgba(0,0,0,0.8); /* Σκιά για να διαβάζεται εύκολα */
 }
 
 /* 2. Μαύρη Μπάρα Κύλισης για το Timeline */
-.timeline-scroll-container::-webkit-scrollbar {
-    width: 6px;
-}
 
 .timeline-scroll-container::-webkit-scrollbar-track {
-    background: #0f172a; 
+    background: #0f172a !important;
 }
 
 .timeline-scroll-container::-webkit-scrollbar-thumb {
-    background: #334155; /* Σκούρο γκρι/μαύρο */
+    background: #334155 !important; 
     border-radius: 10px;
+    border: 2px solid #0f172a; /* Δημιουργεί ένα μικρό κενό γύρω από τη μπάρα */
 }
 
 .timeline-scroll-container::-webkit-scrollbar-thumb:hover {
     background: var(--accent); /* Να φέγγει ελαφρώς στο hover */
-}
-
-/* Εξασφαλίζουμε ότι η μπάρα είναι ορατή */
-.timeline-scroll-container {
-    overflow-y: auto !important;
 }
 
 .timeline-wrapper {
