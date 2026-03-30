@@ -379,7 +379,7 @@ function updateZoomAndRank() {
     document.getElementById('zoomValue').innerText = zoomLevel;
 
     // 1. Δυναμικό κενό για τα ενεργά γεγονότα
-    const activeGap = zoomLevel * 15; 
+    const activeGap = zoomLevel * 5; 
     document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${activeGap}px`);
 
     // 2. Εφαρμογή στυλ βάσει Rank
