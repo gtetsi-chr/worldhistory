@@ -379,7 +379,7 @@ function updateZoomAndRank() {
     document.getElementById('zoomValue').innerText = zoomLevel;
 
     // 1. Τέντωμα (Zoom)
-    const newGap = zoomLevel * 15; 
+    const newGap = zoomLevel * 3; 
     document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
 
     // 2. Συμπίεση Ασήμαντων
