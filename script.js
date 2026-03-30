@@ -378,21 +378,21 @@ function updateZoomAndRank() {
     const zoomLevel = parseInt(document.getElementById('zoomSlider').value);
     document.getElementById('zoomValue').innerText = zoomLevel;
 
-    // 1. Τέντωμα απόστασης
-    const newGap = zoomLevel * 5; // απόστασης zoom
-    document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
+    // 1. Δυναμικό κενό για τα ενεργά γεγονότα
+    const activeGap = zoomLevel * 15; 
+    document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${activeGap}px`);
 
-    // 2. Εφέ Συρρίκνωσης και Διαφάνειας
+    // 2. Εφαρμογή στυλ βάσει Rank
     document.querySelectorAll('.year-marker').forEach(marker => {
         const entityRank = parseInt(marker.getAttribute('data-rank')) || 10;
         
         if (entityRank <= zoomLevel) {
-            // Σημαντικό γεγονός: Μεγάλο και ορατό
-            marker.classList.remove('low-detail');
-            marker.style.maxHeight = "100px"; // Επαναφορά ύψους (άνετο όριο)
+            marker.classList.remove('is-dimmed');
+            marker.style.opacity = "1";
+            marker.style.pointerEvents = "all";
         } else {
-            // Ασήμαντο γεγονός: Μικραίνει και "σβήνει"
-            marker.classList.add('low-detail');
+            marker.classList.add('is-dimmed');
+            // Το opacity και το κενό ορίζονται πλέον από την CSS class .is-dimmed
         }
     });
 }
