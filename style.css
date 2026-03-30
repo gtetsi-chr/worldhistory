@@ -123,27 +123,28 @@ body {
     cursor: pointer;
     z-index: 2; 
     transition: 0.3s;
-   
-   /* "κρύβεται" το περιεχόμενο στο μηδενικό ύψος */
-    margin-bottom: var(--zoom-gap) !important;
-    transition: all 0.8s ease-in-out; /* Αργό και ομαλό transition */
-    overflow: hidden; /* Απαραίτητο για το εφέ ύψους */
 }
-/* Όταν ένα γεγονός είναι "ασήμαντο" βάσει του slider */
-/* Όταν ένα marker είναι "ασήμαντο" (βάσει Rank στο JS) */
-.year-marker.low-detail {
+
+/* Στυλ για τα "ασήμαντα" (ημιδιάφανα) γεγονότα */
+.year-marker.is-dimmed {
     opacity: 0.15;
-    transform: scale(0.9);
-    max-height: 20px; /* Πολύ μικρό ύψος */
+    transform: scale(0.85); /* Ελαφρώς μικρότερα */
+    margin-bottom: 5px !important; /* Πολύ μικρή απόσταση */
     pointer-events: none;
+    transition: all 1.2s ease; /* Αργό transition όπως ζήτησες */
 }
 
-.year-marker.low-detail .year-number {
-    font-size: 0.6rem; /* Μικρά γράμματα */
+.year-marker.is-dimmed .year-number {
+    font-size: 0.7rem; /* Μικρά γράμματα χρονολογίας */
 }
 
-.year-marker.low-detail .entity-name-preview {
-    font-size: 0.5rem; /* Σχεδόν αόρατα γράμματα */
+.year-marker.is-dimmed .entity-name-preview {
+    font-size: 0.6rem; /* Μικρά γράμματα ονόματος */
+}
+
+/* Κανονικά γεγονότα */
+.year-marker {
+    transition: all 1.2s ease; /* Ίδια αργή ταχύτητα παντού */
 }
 
 .dot {
