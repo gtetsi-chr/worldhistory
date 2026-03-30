@@ -379,7 +379,7 @@ function updateZoomAndRank() {
     document.getElementById('zoomValue').innerText = zoomLevel;
 
     // 1. Ρύθμιση απόστασης (Zoom)
-    const newGap = zoomLevel * 15; 
+    const newGap = zoomLevel * 5; 
     document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
 
     // 2. Έλεγχος Rank
