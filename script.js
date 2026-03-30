@@ -378,25 +378,18 @@ function updateZoomAndRank() {
     const zoomLevel = parseInt(document.getElementById('zoomSlider').value);
     document.getElementById('zoomValue').innerText = zoomLevel;
 
-    // 1. Αλλαγή απόστασης (Οπτικό Zoom)
-    // Υπολογίζουμε το κενό: π.χ. Level 1 = 30px, Level 10 = 300px
-    const newGap = zoomLevel * 5; //Απόσταση zoom 5 ή 15 ή 20
+    // 1. Τέντωμα (Zoom)
+    const newGap = zoomLevel * 15; 
     document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
 
-    // 2. Φιλτράρισμα βάσει Rank
-    // Εμφανίζουμε μόνο όσα έχουν Rank μικρότερο ή ίσο με το Zoom Level
+    // 2. Συμπίεση Ασήμαντων
     document.querySelectorAll('.year-marker').forEach(marker => {
-        // Παίρνουμε το rank που αποθηκεύσαμε στο marker (θα το φτιάξουμε στο Βήμα Β)
         const entityRank = parseInt(marker.getAttribute('data-rank')) || 10;
         
         if (entityRank <= zoomLevel) {
-            marker.style.opacity = "1";
-            marker.style.pointerEvents = "all";
-            marker.classList.remove('rank-hidden');
+            marker.classList.remove('is-dimmed');
         } else {
-            marker.style.opacity = "0.2"; // Τα "κρύβουμε" ελαφρώς
-            marker.style.pointerEvents = "none";
-            marker.classList.add('rank-hidden');
+            marker.classList.add('is-dimmed');
         }
     });
 }
