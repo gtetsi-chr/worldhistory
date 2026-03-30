@@ -18,12 +18,12 @@
                 <h2>ΧΡΟΝΟΛΟΓΙΟ</h2>
                 <input type="text" id="timelineSearch" placeholder="Αναζήτηση...">
                 <div class="filter-container">
-                <button class="filter-btn" data-type="Person" title="Πρόσωπα">👤</button>
-                <button class="filter-btn" data-type="Empire/State" title="Αυτοκρατορίες/Κράτη">🏛️</button>
-                <button class="filter-btn" data-type="Event/War" title="Γεγονότα/Πόλεμοι">⚔️</button>
-                <button class="filter-btn" data-type="Invention" title="Εφευρέσεις">💡</button>
-                <button class="filter-btn" data-type="Movement/Culture" title="Πολιτισμός/Κινήματα">🎨</button>
-</div>
+                    <button class="filter-btn" data-type="Person" title="Πρόσωπα">👤</button>
+                    <button class="filter-btn" data-type="Empire/State" title="Αυτοκρατορίες/Κράτη">🏛️</button>
+                    <button class="filter-btn" data-type="Event/War" title="Γεγονότα/Πόλεμοι">⚔️</button>
+                    <button class="filter-btn" data-type="Invention" title="Εφευρέσεις">💡</button>
+                    <button class="filter-btn" data-type="Movement/Culture" title="Πολιτισμός/Κινήματα">🎨</button>
+                </div>
             </div>
         
             <div class="timeline-scroll-container">
@@ -31,6 +31,13 @@
                     <div class="vertical-line"></div>
                     <div id="timeline-axis"></div>
                 </div>
+            </div>
+
+            <div class="zoom-controls">
+                <span>➖</span>
+                <input type="range" id="zoomSlider" min="1" max="10" value="3" step="1">
+                <span>➕</span>
+                <div class="zoom-label">Λεπτομέρεια: <span id="zoomValue">3</span></div>
             </div>
         </aside>
 
