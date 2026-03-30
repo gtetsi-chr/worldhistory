@@ -379,7 +379,7 @@ function updateZoomAndRank() {
     document.getElementById('zoomValue').innerText = zoomLevel;
 
     // 1. Τέντωμα απόστασης
-    const newGap = zoomLevel * 15; 
+    const newGap = zoomLevel * 5; // απόστασης zoom
     document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
 
     // 2. Εφέ Συρρίκνωσης και Διαφάνειας
