@@ -115,6 +115,15 @@ body {
 
 /* Timeline Markers (Στοιχεία λίστας) */
 .year-marker {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 10px;
+    cursor: pointer;
+    z-index: 2; 
+    transition: 0.3s;
+   
     margin-bottom: var(--zoom-gap) !important;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Αργό και ομαλό transition */
     overflow: hidden; /* Για να μην πετάγονται τα γράμματα όταν μικραίνει */
