@@ -55,8 +55,7 @@ function generateTimeline() {
         else if (item.EntityType === "Movement/Culture") typeClass = "marker-culture";
 
         div.className = `year-marker ${typeClass}`;
-		div.setAttribute('data-rank', item.Rank); // Αποθηκεύουμε το Rank από το CSV στο marker
-		
+        
         const yearVal = parseInt(item.Start_Year);
         const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
 
@@ -108,9 +107,6 @@ function generateTimeline() {
         axis.appendChild(div);
         if (index === 0) div.click(); // Επιλογή του πρώτου στοιχείου αυτόματα
     });
-
-	updateZoomAndRank(); // για να "φιλτραριστούν" αμέσως τα Rank!
-	
 }
 
 // 4. Εμφάνιση των στοιχείων της επιλεγμένης οντότητας
@@ -238,7 +234,6 @@ function createCustomIcon(type) {
 }
 
 // 8. Λειτουργία AI
-// 8. Λειτουργία AI (Εμπλουτισμένο Context)
 async function callAI() {
     const inputField = document.getElementById('ai-input');
     const chatBox = document.getElementById('chat-box');
@@ -246,9 +241,6 @@ async function callAI() {
 
     if (!question || !window.currentSelectedEntity) return;
 
-    const entity = window.currentSelectedEntity; // Για ευκολία
-
-    // Εμφάνιση ερώτησης χρήστη
     chatBox.innerHTML += `<p><strong>Εσείς:</strong> ${question}</p>`;
     inputField.value = ""; 
     
@@ -256,39 +248,22 @@ async function callAI() {
     chatBox.innerHTML += `<p id="${loadingId}" style="color:var(--accent);">🤖 Σκέφτομαι...</p>`;
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    // Εμπλουτισμός του Context με όλα τα διαθέσιμα πεδία από το CSV
-    const enrichedContext = `
-        Όνομα: ${entity.Name}
-        Τύπος: ${entity.EntityType}
-        Εποχή/Περίοδος: ${entity.EraName || 'Άγνωστη'}
-        Χρονολογία: ${entity.Start_Year} έως ${entity.End_Year}
-        Ιδιότητα: ${entity.CategoryName || ''}
-        Σχολή/Ρεύμα: ${entity.School_Tag || ''}
-        Βιογραφικό: ${entity.BiographyShort}
-        Κύρια Συνεισφορά & Έργα: ${entity.KeyContribution || ''}
-        Περιοχή: ${entity.PlaceOfOrigin || ''}
-    `.trim();
-
     try {
         const response = await fetch("https://history.gtetsi.workers.dev/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 question: question,
-                entityName: entity.Name,
-                context: enrichedContext // Στέλνουμε το νέο, αναλυτικό context
+                entityName: window.currentSelectedEntity.Name,
+                context: window.currentSelectedEntity.BiographyShort + " " + window.currentSelectedEntity.KeyContribution
             })
         });
-        
         const data = await response.json();
-        const loadingEl = document.getElementById(loadingId);
-        if (loadingEl) loadingEl.remove();
-
+        document.getElementById(loadingId).remove();
         chatBox.innerHTML += `<p><strong>🤖 AI:</strong> ${data.text}</p>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     } catch (err) {
-        const loadingEl = document.getElementById(loadingId);
-        if (loadingEl) loadingEl.innerText = "❌ Σφάλμα σύνδεσης με την AI.";
+        document.getElementById(loadingId).innerText = "❌ Σφάλμα σύνδεσης.";
     }
 }
 
@@ -304,95 +279,9 @@ function setupEventListeners() {
         });
     });
 
-document.getElementById('timelineSearch').addEventListener('input', applyFilters);
-
-    // Κουμπιά Φίλτρων
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Αν πατηθεί το ήδη ενεργό, το απενεργοποιούμε
-            if (btn.classList.contains('active')) {
-                btn.classList.remove('active');
-            } else {
-                // Απενεργοποιούμε όλα τα άλλα και ενεργοποιούμε αυτό
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            }
-            applyFilters(); // Εφαρμογή φίλτρου
-        });
-    });
-	
     // AI Κουμπί και Enter
     document.getElementById('send-ai-btn').addEventListener('click', callAI);
     document.getElementById('ai-input').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') callAI();
-    });
-
-	// Listener για το Slider
-	document.getElementById('zoomSlider').addEventListener('input', updateZoomAndRank);
-
-	// Λειτουργία για το κουμπί Μείον (-)
-	document.getElementById('zoomOut').addEventListener('click', () => {
-	    const slider = document.getElementById('zoomSlider');
-	    slider.value = parseInt(slider.value) - 1;
-	    updateZoomAndRank(); // Καλούμε τη συνάρτηση για να ανανεωθεί το timeline
-	});
-	
-	// Λειτουργία για το κουμπί Συν (+)
-	document.getElementById('zoomIn').addEventListener('click', () => {
-	    const slider = document.getElementById('zoomSlider');
-	    slider.value = parseInt(slider.value) + 1;
-	    updateZoomAndRank(); // Καλούμε τη συνάρτηση για να ανανεωθεί το timeline
-	});
-}
-
-// 10. Λειτουργία Φιλτραρίσματος (EntityType)
-function applyFilters() {
-    const activeBtn = document.querySelector('.filter-btn.active');
-    const searchTerm = document.getElementById('timelineSearch').value.toLowerCase();
-    const selectedType = activeBtn ? activeBtn.getAttribute('data-type') : null;
-
-    document.querySelectorAll('.year-marker').forEach(marker => {
-        // Παίρνουμε τα δεδομένα από το marker (χρησιμοποιώντας το όνομα και το έτος που ήδη έχεις)
-        const name = marker.querySelector('.entity-name-preview').innerText.toLowerCase();
-        const year = marker.querySelector('.year-number').innerText.toLowerCase();
-        
-        // Έλεγχος αν ταιριάζει με το κείμενο αναζήτησης
-        const matchesSearch = name.includes(searchTerm) || year.includes(searchTerm);
-        
-        // Έλεγχος αν ταιριάζει με τον τύπο (π.χ. Person)
-        // Επειδή στο CSS βάζεις class "marker-person", ελέγχουμε αν η class περιέχει τον τύπο
-        const markerClass = marker.className.toLowerCase();
-        const matchesType = !selectedType || markerClass.includes(selectedType.toLowerCase().split('/')[0]);
-
-        // Εμφάνιση ή απόκρυψη
-        if (matchesSearch && matchesType) {
-            marker.classList.remove('hidden');
-        } else {
-            marker.classList.add('hidden');
-        }
-    });
-}
-
-// 11. Λειτουργία Zoom & Rank Filtering
-function updateZoomAndRank() {
-    const zoomLevel = parseInt(document.getElementById('zoomSlider').value);
-    document.getElementById('zoomValue').innerText = zoomLevel;
-
-    // 1. Μικρό τέντωμα (πιο διακριτικό από πριν)
-    // Level 1 = 10px κενό, Level 10 = 100px κενό
-    const newGap = zoomLevel * 10; 
-    document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
-
-    // 2. Ημιδιαφάνεια βάσει Rank (αυτό που σου άρεσε!)
-    document.querySelectorAll('.year-marker').forEach(marker => {
-        const entityRank = parseInt(marker.getAttribute('data-rank')) || 10;
-        
-        if (entityRank <= zoomLevel) {
-            marker.style.opacity = "1";
-            marker.style.pointerEvents = "all";
-        } else {
-            marker.style.opacity = "0.15"; // Πολύ αχνό αλλά ορατό
-            marker.style.pointerEvents = "none";
-        }
     });
 }
