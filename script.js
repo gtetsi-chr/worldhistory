@@ -56,7 +56,7 @@ function generateTimeline() {
 
         div.className = `year-marker ${typeClass}`;
 
-		marker.setAttribute('data-rank', item.Rank); // Αποθηκεύουμε το Rank από το CSV στο marker
+		div.setAttribute('data-rank', item.Rank); // Αποθηκεύουμε το Rank από το CSV στο marker
         
         const yearVal = parseInt(item.Start_Year);
         const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
