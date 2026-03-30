@@ -55,6 +55,8 @@ function generateTimeline() {
         else if (item.EntityType === "Movement/Culture") typeClass = "marker-culture";
 
         div.className = `year-marker ${typeClass}`;
+
+		marker.setAttribute('data-rank', item.Rank); // Αποθηκεύουμε το Rank από το CSV στο marker
         
         const yearVal = parseInt(item.Start_Year);
         const yearText = yearVal > 0 ? yearVal : Math.abs(yearVal) + " π.Χ.";
@@ -107,6 +109,8 @@ function generateTimeline() {
         axis.appendChild(div);
         if (index === 0) div.click(); // Επιλογή του πρώτου στοιχείου αυτόματα
     });
+
+	updateZoomAndRank(); // Πρόσθεσε αυτή τη γραμμή εδώ για να "φιλτραριστούν" αμέσως τα Rank!
 }
 
 // 4. Εμφάνιση των στοιχείων της επιλεγμένης οντότητας
@@ -322,6 +326,9 @@ document.getElementById('timelineSearch').addEventListener('input', applyFilters
     document.getElementById('ai-input').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') callAI();
     });
+
+	// Listener για το Slider
+	document.getElementById('zoomSlider').addEventListener('input', updateZoomAndRank);
 }
 
 // 10. Λειτουργία Φιλτραρίσματος (EntityType)
@@ -348,6 +355,34 @@ function applyFilters() {
             marker.classList.remove('hidden');
         } else {
             marker.classList.add('hidden');
+        }
+    });
+}
+
+// 11. Λειτουργία Zoom & Rank Filtering
+function updateZoomAndRank() {
+    const zoomLevel = parseInt(document.getElementById('zoomSlider').value);
+    document.getElementById('zoomValue').innerText = zoomLevel;
+
+    // 1. Αλλαγή απόστασης (Οπτικό Zoom)
+    // Υπολογίζουμε το κενό: π.χ. Level 1 = 30px, Level 10 = 300px
+    const newGap = zoomLevel * 35; 
+    document.querySelector('.timeline-wrapper').style.setProperty('--zoom-gap', `${newGap}px`);
+
+    // 2. Φιλτράρισμα βάσει Rank
+    // Εμφανίζουμε μόνο όσα έχουν Rank μικρότερο ή ίσο με το Zoom Level
+    document.querySelectorAll('.year-marker').forEach(marker => {
+        // Παίρνουμε το rank που αποθηκεύσαμε στο marker (θα το φτιάξουμε στο Βήμα Β)
+        const entityRank = parseInt(marker.getAttribute('data-rank')) || 10;
+        
+        if (entityRank <= zoomLevel) {
+            marker.style.opacity = "1";
+            marker.style.pointerEvents = "all";
+            marker.classList.remove('rank-hidden');
+        } else {
+            marker.style.opacity = "0.2"; // Τα "κρύβουμε" ελαφρώς
+            marker.style.pointerEvents = "none";
+            marker.classList.add('rank-hidden');
         }
     });
 }
