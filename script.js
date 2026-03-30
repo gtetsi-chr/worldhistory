@@ -237,7 +237,6 @@ function createCustomIcon(type) {
     });
 }
 
-// 8. Λειτουργία AI
 // 8. Λειτουργία AI (Εμπλουτισμένο Context)
 async function callAI() {
     const inputField = document.getElementById('ai-input');
@@ -352,19 +351,27 @@ function applyFilters() {
     const selectedType = activeBtn ? activeBtn.getAttribute('data-type') : null;
 
     document.querySelectorAll('.year-marker').forEach(marker => {
-        // Παίρνουμε τα δεδομένα από το marker (χρησιμοποιώντας το όνομα και το έτος που ήδη έχεις)
         const name = marker.querySelector('.entity-name-preview').innerText.toLowerCase();
         const year = marker.querySelector('.year-number').innerText.toLowerCase();
         
-        // Έλεγχος αν ταιριάζει με το κείμενο αναζήτησης
         const matchesSearch = name.includes(searchTerm) || year.includes(searchTerm);
         
-        // Έλεγχος αν ταιριάζει με τον τύπο (π.χ. Person)
-        // Επειδή στο CSS βάζεις class "marker-person", ελέγχουμε αν η class περιέχει τον τύπο
-        const markerClass = marker.className.toLowerCase();
-        const matchesType = !selectedType || markerClass.includes(selectedType.toLowerCase().split('/')[0]);
+        // ΔΙΟΡΘΩΣΗ ΕΔΩ: Ελέγχουμε σωστά τις κλάσεις
+        let matchesType = true;
+        if (selectedType) {
+            const markerClass = marker.className.toLowerCase();
+            // Αν το φίλτρο είναι Movement/Culture, ψάχνουμε για τη λέξη "culture" στην κλάση
+            if (selectedType === "Movement/Culture") {
+                matchesType = markerClass.includes("culture");
+            } else if (selectedType === "Empire/State") {
+                matchesType = markerClass.includes("empire");
+            } else if (selectedType === "Event/War") {
+                matchesType = markerClass.includes("event");
+            } else {
+                matchesType = markerClass.includes(selectedType.toLowerCase());
+            }
+        }
 
-        // Εμφάνιση ή απόκρυψη
         if (matchesSearch && matchesType) {
             marker.classList.remove('hidden');
         } else {
