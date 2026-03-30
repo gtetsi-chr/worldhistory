@@ -150,6 +150,50 @@ body {
 .year-number { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
 .entity-name-preview { font-size: 0.75rem; color: var(--text-dim); }
 
+/* Container για τα κουμπιά φίλτρων */
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    gap: 5px;
+}
+
+.filter-btn {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: white;
+    padding: 8px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Hover εφέ με λάμψη ανάλογα με τον τύπο */
+.filter-btn[data-type="Person"]:hover, .filter-btn[data-type="Person"].active { 
+    border-color: var(--person); box-shadow: 0 0 10px var(--person); 
+}
+.filter-btn[data-type="Empire/State"]:hover, .filter-btn[data-type="Empire/State"].active { 
+    border-color: var(--empire); box-shadow: 0 0 10px var(--empire); 
+}
+.filter-btn[data-type="Event/War"]:hover, .filter-btn[data-type="Event/War"].active { 
+    border-color: var(--event); box-shadow: 0 0 10px var(--event); 
+}
+.filter-btn[data-type="Invention"]:hover, .filter-btn[data-type="Invention"].active { 
+    border-color: var(--invention); box-shadow: 0 0 10px var(--invention); 
+}
+.filter-btn[data-type="Movement/Culture"]:hover, .filter-btn[data-type="Movement/Culture"].active { 
+    border-color: var(--culture); box-shadow: 0 0 10px var(--culture); 
+}
+
+/* Όταν το κουμπί είναι πατημένο (active) */
+.filter-btn.active {
+    background: #334155;
+    transform: scale(1.05);
+}
+
+
 /* ==========================================================================
    3. ΚΥΡΙΩΣ ΠΕΡΙΕΧΟΜΕΝΟ (Main Content & Grid)
    ========================================================================== */
